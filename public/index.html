@@ -3,100 +3,184 @@
 <head>
   <title>Playsculpt - Powering Imagination</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/TransformControls.js"></script>
+
+  <style>
+    body {
+      font-family: Verdana, Arial, sans-serif;
+      background-color: #E3E3E3;
+      margin: 0;
+      padding: 0;
+    }
+    a {
+      color: #0000FF;
+    }
+    #pageContainer {
+      max-width: 960px;
+      width: 100%;
+      margin: 0 auto;
+      background-color: #FFFFFF;
+      box-sizing: border-box;
+    }
+    .header {
+      background-color: #0053A1;
+      color: #FFFFFF;
+      padding: 5px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header .logo {
+      font-size: 2em;
+      font-weight: bold;
+    }
+    .header a {
+      color: #FFFFFF;
+      text-decoration: none;
+      padding: 0 4px;
+    }
+    .content-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      padding: 10px;
+    }
+    .sidebar {
+      width: 220px;
+      padding-right: 20px;
+      box-sizing: border-box;
+    }
+    .main-content {
+      flex: 1;
+      min-width: 300px;
+    }
+    .footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.8em;
+      color: #666666;
+    }
+    hr {
+      border: 0;
+      height: 1px;
+      background: #ccc;
+    }
+    /* Make form elements more mobile-friendly */
+    input[type="text"], input[type="password"], input[type="number"], textarea, select {
+        width: 95%;
+        padding: 8px;
+        margin: 4px 0;
+        box-sizing: border-box;
+    }
+    input[type="submit"], input[type="button"] {
+        padding: 8px 12px;
+        cursor: pointer;
+    }
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+    /* Responsive styles for screens smaller than 768px */
+    @media (max-width: 768px) {
+      .content-wrapper {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+        padding-right: 0;
+        margin-bottom: 20px;
+      }
+      .header {
+        flex-direction: column;
+        text-align: center;
+      }
+      .header .nav {
+        margin-top: 10px;
+      }
+      #editorContainer {
+        position: relative !important;
+        height: 400px;
+        width: 100%;
+        left: 0 !important;
+        top: 0 !important;
+      }
+      #createView > div:not(#editorContainer) {
+        position: static !important;
+        width: 100% !important;
+        border: 0 !important;
+        border-bottom: 1px solid #ccc !important;
+      }
+    }
+  </style>
 </head>
 
-<body bgcolor="#E3E3E3" text="#000000" link="#0000FF" vlink="#0000FF" alink="#0000FF">
+<body>
 
   <div id="adminBanner" style="display: none; text-align: center; padding: 5px;"></div>
 
-  <table width="960" border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
-    <tbody>
-      <tr>
-        <td colspan="2" bgcolor="#0053A1">
-          <table width="100%" border="0" cellpadding="5" cellspacing="0">
-            <tr>
-              <td width="200">
-                <font face="Verdana, Arial, sans-serif" color="#FFFFFF" size="6">
-                  <b>Playsculpt</b>
-                </font>
-              </td>
-              <td align="right">
-                <font face="Verdana, Arial, sans-serif" color="#FFFFFF" size="2">
-                  <a href="#" style="color:#FFFFFF; text-decoration:none;" onclick="navigateTo('home')"><b>My Playsculpt</b></a> |
-                  <a href="#" style="color:#FFFFFF; text-decoration:none;" onclick="navigateTo('create')"><b>Create</b></a> |
-                  <span id="sculptTestMessagesLink" style="display:none;"><a href="#" style="color:#FFFFFF; text-decoration:none;" onclick="navigateTo('sculpt_test_messages')"><b>SculptTest Messages</b></a> |</span>
-                  <a href="#" style="color:#FFFFFF; text-decoration:none;" onclick="navigateTo('games')"><b>Games</b></a> |
-                  <a href="#" style="color:#FFFFFF; text-decoration:none;"><b>Catalog</b></a> |
-                  <a href="#" style="color:#FFFFFF; text-decoration:none;" onclick="showForumsView()"><b>Forums</b></a> |
-                  <a href="#" style="color:#FFFFFF; text-decoration:none;"><b>Search</b></a>
-                </font>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
+  <div id="pageContainer">
+    <div class="header">
+        <div class="logo">Playsculpt</div>
+        <div class="nav">
+            <a href="#" onclick="navigateTo('home')"><b>My Playsculpt</b></a> |
+            <a href="#" onclick="navigateTo('create')"><b>Create</b></a> |
+            <span id="sculptTestMessagesLink" style="display:none;"><a href="#" onclick="navigateTo('sculpt_test_messages')"><b>SculptTest Messages</b></a> |</span>
+            <a href="#" onclick="navigateTo('games')"><b>Games</b></a> |
+            <a href="#"><b>Catalog</b></a> |
+            <a href="#" onclick="showForumsView()"><b>Forums</b></a> |
+            <a href="#"><b>Search</b></a>
+        </div>
+    </div>
 
-      <tr>
-        <td colspan="2" height="10"></td>
-      </tr>
-
-      <tr>
-        <td width="220" valign="top" align="center" style="padding-left:10px; padding-right:10px;">
-          
+    <div class="content-wrapper">
+        <div class="sidebar">
           <div id="authArea">
               </div>
-          
           <div id="userInfoArea" align="center" style="display:none;">
              </div>
+          <hr>
+          <h3>Playsculpt News</h3>
+          - Color Picker added to Create mode!<br>
+          - Summer building contest begins.<br>
+          - Trading system is now LIVE!
+        </div>
 
-          <hr width="90%">
-
-          <font face="Verdana, Arial, sans-serif" size="3">
-            <b>Playsculpt News</b>
-          </font>
-          <br>
-          <font face="Verdana, Arial, sans-serif" size="2">
-            <p align="left">
-              - Color Picker added to Create mode!<br>
-              - Summer building contest begins.<br>
-              - Trading system is now LIVE!
-            </p>
-          </font>
-
-        </td>
-
-        <td valign="top" style="padding-right:10px;">
+        <div class="main-content">
           <div id="mainContent">
-            <table width="100%" border="1" bordercolor="#CCCCCC" cellpadding="10" cellspacing="0">
-              <tr><td><font face="Verdana, Arial, sans-serif" size="4"><b>Welcome to Playsculpt!</b></font><br><font face="Verdana, Arial, sans-serif" size="2">The ultimate 3D platform for playing, creating, and sharing experiences. What will you build today?</font></td></tr>
-            </table><br>
-            <div id="forumSpotlight" style="display:none; border: 1px solid #999999; padding: 10px;"><font face="Verdana, Arial, sans-serif" size="3"><b>Forum Spotlight</b></font><hr><div id="spotlightContent"></div></div><br>
-            <font face="Verdana, Arial, sans-serif" size="3"><b>Featured Games</b></font><hr>
+            <h2>Welcome to Playsculpt!</h2>
+            <p>The ultimate 3D platform for playing, creating, and sharing experiences. What will you build today?</p>
+            <div id="forumSpotlight" style="display:none; border: 1px solid #999999; padding: 10px;">
+                <h3>Forum Spotlight</h3>
+                <hr>
+                <div id="spotlightContent"></div>
+            </div>
+            <br>
+            <h3>Featured Games</h3>
+            <hr>
             <table width="100%" border="0" cellpadding="5" cellspacing="5">
               <tr align="center">
-                <td width="33%" valign="top"><img src="https://placehold.co/150x100/CCCCCC/000000?text=Brick+Battle" alt="Brick Battle Game"><br><font face="Verdana, Arial, sans-serif" size="2"><b><a href="#">Brick Battle Arena</a></b><br>By: Constructor_Carl</font><br><input type="button" value="Play" onclick="launchGame('Brick Battle Arena')"></td>
-                <td width="33%" valign="top"><img src="https://placehold.co/150x100/DDDDDD/000000?text=Obby" alt="Escape the Obby Game"><br><font face="Verdana, Arial, sans-serif" size="2"><b><a href="#">Escape the Treacherous Obby</a></b><br>By: SpeedySamantha</font><br><input type="button" value="Play" onclick="launchGame('Escape the Treacherous Obby')"></td>
-                <td width="33%" valign="top"><img src="https://placehold.co/150x100/EEEEEE/000000?text=Tycoon" alt="Tycoon Game"><br><font face="Verdana, Arial, sans-serif" size="2"><b><a href="#">Build Your Dream House Tycoon</a></b><br>By: TycoonKing</font><br><input type="button" value="Play" onclick="launchGame('Build Your Dream House Tycoon')"></td>
+                <td width="33%" valign="top"><img src="https://placehold.co/150x100/CCCCCC/000000?text=Brick+Battle" alt="Brick Battle Game"><br><b><a href="#">Brick Battle Arena</a></b><br>By: Constructor_Carl<br><input type="button" value="Play" onclick="launchGame('Brick Battle Arena')"></td>
+                <td width="33%" valign="top"><img src="https://placehold.co/150x100/DDDDDD/000000?text=Obby" alt="Escape the Obby Game"><br><b><a href="#">Escape the Treacherous Obby</a></b><br>By: SpeedySamantha<br><input type="button" value="Play" onclick="launchGame('Escape the Treacherous Obby')"></td>
+                <td width="33%" valign="top"><img src="https://placehold.co/150x100/EEEEEE/000000?text=Tycoon" alt="Tycoon Game"><br><b><a href="#">Build Your Dream House Tycoon</a></b><br>By: TycoonKing<br><input type="button" value="Play" onclick="launchGame('Build Your Dream House Tycoon')"></td>
               </tr>
             </table>
           </div>
           <div id="forumView" style="display:none;"></div>
           <div id="sculptTestHubView" style="display:none;"></div>
           <div id="createView" style="display:none; height: 600px; position: relative;"></div>
-        </td>
-      </tr>
+        </div>
+    </div>
       
-      <tr>
-        <td colspan="2" height="50" align="center" valign="middle">
-          <hr>
-          <font face="Verdana, Arial, sans-serif" size="1" color="#666666">Copyright &copy; 2012 Playsculpt Corporation. All Rights Reserved.<br><a href="#">About Us</a> | <a href="#">Jobs</a> | <a href="#">Terms of Service</a> | <a href="#">Privacy Policy</a></font>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+    <div class="footer">
+      <hr>
+      Copyright &copy; 2025 Playsculpt Corporation. All Rights Reserved.<br>
+      <a href="#">About Us</a> | <a href="#">Jobs</a> | <a href="#">Terms of Service</a> | <a href="#">Privacy Policy</a>
+    </div>
+  </div>
 
   <script type="text/javascript">
     // --- Global State ---
@@ -138,12 +222,12 @@
     function renderAdminBannerControls() {
         const banner = adminBannerCache;
         if (!banner) return '';
-        let html = `<hr width="90%"><font size="2"><b>Admin Banner Controls</b></font><br>`;
+        let html = `<hr><h3>Admin Banner Controls</h3>`;
         html += `<form onsubmit="handleUpdateBanner(event)">`;
-        html += `Message:<br><input type="text" id="bannerMessage" value="${banner.message}" style="width: 150px;"><br>`;
+        html += `Message:<br><input type="text" id="bannerMessage" value="${banner.message}"><br>`;
         html += `BG Color: <input type="color" id="bannerBgColor" value="${banner.backgroundColor}"><br>`;
         html += `Text Color: <input type="color" id="bannerTextColor" value="${banner.textColor}"><br>`;
-        html += `Font Size (px): <input type="number" id="bannerFontSize" value="${banner.fontSize}" style="width: 50px;"><br>`;
+        html += `Font Size (px): <input type="number" id="bannerFontSize" value="${banner.fontSize}" style="width: 80px;"><br>`;
         html += `<input type="checkbox" id="bannerEnabled" ${banner.enabled ? 'checked' : ''}> Enable Banner<br>`;
         html += `<input type="submit" value="Update Banner">`;
         html += `</form>`;
@@ -204,16 +288,16 @@
     }
     function renderCategories() {
         const categories = forumDataCache.categories;
-        let html = '<font face="Verdana, Arial, sans-serif" size="3"><b>Forum Categories</b></font>';
+        let html = '<h3>Forum Categories</h3>';
         html += ' <input type="button" value="Create Post" onclick="renderForum(\'create_post\')">';
         html += '<hr>';
-        html += '<div style="border: 1px solid #ccc; padding: 8px; margin-bottom: 10px; background-color: #f9f9f9;"><font face="Verdana, Arial, sans-serif" size="2"><b>Forum Guidelines</b></font><br><font face="Verdana, Arial, sans-serif" size="1">Help us keep forums organized and on topic... Moderators have the right to relocate where posts go... Breaking these rules will result in either a ban or warning...</font></div>';
+        html += '<div style="border: 1px solid #ccc; padding: 8px; margin-bottom: 10px; background-color: #f9f9f9;"><b>Forum Guidelines</b><br><small>Help us keep forums organized and on topic... Moderators have the right to relocate where posts go... Breaking these rules will result in either a ban or warning...</small></div>';
         html += '<table width="100%" border="0" cellpadding="5" cellspacing="0">';
         if (categories && categories.length > 0) {
             categories.forEach(cat => {
                 html += `<tr><td><a href="#" onclick="renderForum('posts', ${cat.id})">${cat.name}</a>`;
                 if (cat.label) {
-                    html += `<br><font size="1" color="#666666"><i>${cat.label}</i></font>`;
+                    html += `<br><small><i>${cat.label}</i></small>`;
                 }
                 html += `</td></tr>`;
             });
@@ -230,9 +314,9 @@
             return;
         }
         const posts = forumDataCache.posts.filter(p => p.categoryId === categoryId);
-        let html = `<font face="Verdana, Arial, sans-serif" size="3"><b>${category.name}</b></font> <input type="button" value="&laquo; Back to Categories" onclick="renderForum()"> <input type="button" value="Create Post" onclick="renderForum(\'create_post\')"><hr>`;
+        let html = `<h3>${category.name}</h3> <input type="button" value="&laquo; Back to Categories" onclick="renderForum()"> <input type="button" value="Create Post" onclick="renderForum(\'create_post\')"><hr>`;
         if(category.label) {
-            html += `<p><font size="2" color="#333333"><i>${category.label}</i></font></p><hr>`;
+            html += `<p><i>${category.label}</i></p><hr>`;
         }
         html += '<table width="100%" border="0" cellpadding="5" cellspacing="0">';
         if (posts.length > 0) {
@@ -286,16 +370,16 @@
                 const nextNumber = lastReply ? parseInt(lastReply.content, 10) + 1 : 1;
                 html += `<p><i>Next number must be: <b>${nextNumber}</b>. Only enter numbers.</i></p>`;
             }
-            html += `<textarea id="replyContent" rows="5" style="width:98%;" maxlength="1000"></textarea><br><input type="button" value="Post Reply" onclick="handleReply('${post.id}')">`;
+            html += `<textarea id="replyContent" rows="5" maxlength="1000"></textarea><br><input type="button" value="Post Reply" onclick="handleReply('${post.id}')">`;
         }
         document.getElementById('forumView').innerHTML = html;
     }
     function renderCreatePostForm() {
-        let html = '<input type="button" value="&laquo; Back to Categories" onclick="renderForum()"><h3>Create a New Post</h3><form id="createPostForm" onsubmit="handleCreatePost(event)">Title (1-75 chars):<br><input type="text" id="postTitle" name="title" style="width:98%;" maxlength="75" required><br><br>Category:<br><select id="postCategory" name="categoryId" onchange="toggleImageUpload(this.value)">';
+        let html = '<input type="button" value="&laquo; Back to Categories" onclick="renderForum()"><h3>Create a New Post</h3><form id="createPostForm" onsubmit="handleCreatePost(event)">Title (1-75 chars):<br><input type="text" id="postTitle" name="title" maxlength="75" required><br><br>Category:<br><select id="postCategory" name="categoryId" onchange="toggleImageUpload(this.value)">';
         forumDataCache.categories.forEach(cat => {
             html += `<option value="${cat.id}">${cat.name}</option>`;
         });
-        html += '</select><br><br><div id="imageUploadSection" style="display:none;">Image (Optional):<br><input type="file" id="postImage" name="image"><br><br></div>Content (max 2000 chars):<br><textarea id="postContent" name="content" rows="10" style="width:98%;" maxlength="2000" required></textarea><br><br><input type="submit" value="Submit Post"></form>';
+        html += '</select><br><br><div id="imageUploadSection" style="display:none;">Image (Optional):<br><input type="file" id="postImage" name="image"><br><br></div>Content (max 2000 chars):<br><textarea id="postContent" name="content" rows="10" maxlength="2000" required></textarea><br><br><input type="submit" value="Submit Post"></form>';
         document.getElementById('forumView').innerHTML = html;
         toggleImageUpload(document.getElementById('postCategory').value);
     }
@@ -437,7 +521,7 @@
              hubView.innerHTML = `<h3>Welcome to the SculptTest Hub</h3><p>Post jobs or find jobs to earn currency!</p><hr><input type="button" value="Post a Testing Job" onclick="renderSculptTestHub('post_job_form')"> <input type="button" value="Find Testing Jobs" onclick="renderSculptTestHub('find_jobs')">`;
         }
         if (view === 'post_job_form') {
-            hubView.innerHTML = `<h3>Post a Testing Job</h3><p>Post a job for your game...</p><hr><input type="button" value="&laquo; Back to Hub" onclick="renderSculptTestHub('main')"><br><br><form onsubmit="handlePostJob(event)">Job Title:<br><input type="text" id="jobTitle" required style="width: 80%;"><br><br>Description:<br><textarea id="jobDesc" required rows="5" style="width: 80%;"></textarea><br><br>Game Link:<br><input type="text" id="jobGameLink" required style="width: 80%;"><br><br>Requirements:<br><input type="text" id="jobReqs" style="width: 80%;"><br><br>Payment:<br><input type="number" id="jobAmount" required min="1"> <select id="jobPaymentMethod"><option value="Points">Points</option><option value="SculptCoins">SculptCoins</option></select><br><br><input type="checkbox" id="jobTos" required> I agree to the ToS.<br><br><input type="submit" value="Post Job & Deposit Escrow"></form>`;
+            hubView.innerHTML = `<h3>Post a Testing Job</h3><p>Post a job for your game...</p><hr><input type="button" value="&laquo; Back to Hub" onclick="renderSculptTestHub('main')"><br><br><form onsubmit="handlePostJob(event)">Job Title:<br><input type="text" id="jobTitle" required><br><br>Description:<br><textarea id="jobDesc" required rows="5"></textarea><br><br>Game Link:<br><input type="text" id="jobGameLink" required><br><br>Requirements:<br><input type="text" id="jobReqs"><br><br>Payment:<br><input type="number" id="jobAmount" required min="1"> <select id="jobPaymentMethod"><option value="Points">Points</option><option value="SculptCoins">SculptCoins</option></select><br><br><input type="checkbox" id="jobTos" required> I agree to the ToS.<br><br><input type="submit" value="Post Job & Deposit Escrow"></form>`;
         }
         if (view === 'find_jobs') { renderJobFindList(); }
         if (view === 'messages') { renderMyMessages(); }
@@ -512,14 +596,14 @@
         }
         html += `<hr><h4>Chat</h4><div id="chatBox" style="height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 5px; margin-bottom: 10px;">`;
         job.chat.forEach(m => { html += `<b>${m.sender}:</b> ${m.text}<br>`; });
-        html += `</div><textarea id="chatMessage" rows="2" style="width: 80%;"></textarea><input type="button" value="Send" onclick="handleSendMessage('${job.id}')">`;
+        html += `</div><textarea id="chatMessage" rows="2"></textarea><input type="button" value="Send" onclick="handleSendMessage('${job.id}')">`;
         if (isPoster && job.status === 'open') {
              html += `<hr><h4>Applicants</h4>`;
              if (job.applicants.length > 0) { job.applicants.forEach(a => { html += `<p>${a.username} <input type="button" value="Accept" onclick="handleAcceptApplicant('${job.id}', '${a.username}')"></p>`; }); }
              else { html += `<p>No applicants yet.</p>` }
         }
         if (isTester && job.status === 'in_progress') {
-            html += `<hr><h4>Submit Report</h4><form id="reportForm" onsubmit="handleSubmitReport(event, '${job.id}')">Title:<br><input type="text" name="title" required style="width:80%;"><br><br>Findings:<br><textarea name="findings" required rows="5" style="width:80%;"></textarea><br><br>Attachments:<br><input type="file" name="attachments" multiple><br><br><input type="submit" value="Submit"></form>`;
+            html += `<hr><h4>Submit Report</h4><form id="reportForm" onsubmit="handleSubmitReport(event, '${job.id}')">Title:<br><input type="text" name="title" required><br><br>Findings:<br><textarea name="findings" required rows="5"></textarea><br><br>Attachments:<br><input type="file" name="attachments" multiple><br><br><input type="submit" value="Submit"></form>`;
         }
         if (isPoster && job.status === 'in_progress') {
              html += `<hr><input type="button" value="Mark Complete & Release Payment" onclick="handleCompleteJob('${job.id}')">`;
@@ -602,10 +686,17 @@
 
     // --- Page Navigation & Content Switching ---
     function navigateTo(page, id = null) {
+        // ADDED: Restrict access to Create page
+        if (page === 'create' && (!currentUser || currentUser.username.startsWith('Guest'))) {
+            alert('You must be logged in to a registered account to access the Create page.');
+            return;
+        }
+
         document.getElementById('mainContent').style.display = 'none';
         document.getElementById('forumView').style.display = 'none';
         document.getElementById('sculptTestHubView').style.display = 'none';
         document.getElementById('createView').style.display = 'none';
+        
         if (page === 'home' || page === 'games') { document.getElementById('mainContent').style.display = 'block'; }
         else if (page === 'create') {
             document.getElementById('createView').style.display = 'block';
@@ -620,20 +711,19 @@
 
     // --- Authentication & UI ---
     function launchGame(gameName) { alert("Starting " + gameName + "..."); }
-    function showAuthArea(mode) { const a = document.getElementById('authArea'); if (mode === 'signup') { a.innerHTML = `<font face="Verdana, Arial, sans-serif" size="3"><b>Sign Up</b></font><br><br><form onsubmit="handleSignup(event)"><font size="2">Username:</font><br><input type="text" id="signupUsername" style="width:150px;"><br><font size="2">Password:</font><br><input type="password" id="signupPassword" style="width:150px;"><br><br><input type="submit" value="Sign Up"><br><br><a href="#" onclick="showAuthArea('login')">Already have an account?</a></form>`; } else { a.innerHTML = `<font face="Verdana, Arial, sans-serif" size="3"><b>Member Login</b></font><br><br><form onsubmit="handleLogin(event)"><font size="2">Username:</font><br><input type="text" id="loginUsername" style="width:150px;"><br><font size="2">Password:</font><br><input type="password" id="loginPassword" style="width:150px;"><br><br><input type="submit" value="Login"></form><br><a href="#" onclick="handleGuestLogin()"><b>Play as Guest</b></a><br><a href="#" onclick="showAuthArea('signup')"><b>Sign Up! It's Free!</b></a>`; } }
-    function showLoggedInState(user) { document.getElementById('authArea').style.display = 'none'; if (user && !user.username.startsWith('Guest')) { document.getElementById('sculptTestMessagesLink').style.display = 'inline'; } const u = document.getElementById('userInfoArea'); u.style.display = 'block'; let h = `<font face="Verdana, Arial, sans-serif" size="2">Hello, <b>${user.username}</b>!</font><br><br><img src="https://placehold.co/120x120/CCCCCC/000000?text=Avatar" alt="Your Avatar"><br><br>`; if (user.currencies) { h += `<table border="0" cellpadding="2" cellspacing="2" align="center" width="90%"><tr><td align="left">Diamonds:</td><td align="right">${user.currencies.diamonds}</td></tr><tr><td align="left">Sculptcoins:</td><td align="right">${user.currencies.sculptcoins}</td></tr><tr><td align="left">Points:</td><td align="right">${user.currencies.points}</td></tr></table>`; } h += `<a href="#" onclick="handleLogout()">Logout</a>`; if (!user.username.startsWith('Guest')) { h += `<hr width="90%"><font size="2"><b>Account Settings</b></font><br><form onsubmit="handleChangePassword(event)"><font size="1"><b>Change Password</b></font><br><input type="password" placeholder="Old" id="oldPassword" style="width:150px; margin-top:4px;"><br><input type="password" placeholder="New" id="newPassword" style="width:150px; margin-top:4px;"><br><input type="password" placeholder="Confirm" id="confirmNewPassword" style="width:150px; margin-top:4px;"><br><input type="submit" value="Update Password" style="margin-top:4px;"></form><br><form onsubmit="handleChangeUsername(event)"><font size="1"><b>Change Username (10 Diamonds)</b></font><br><input type="text" placeholder="New Username" id="newUsername" style="width:150px; margin-top:4px;"><br><input type="password" placeholder="Password" id="currentPasswordForUName" style="width:150px; margin-top:4px;"><br><input type="submit" value="Update Username" style="margin-top:4px;"></form>`; } if (user.username === 'Admin') { h += renderAdminBannerControls(); } u.innerHTML = h; }
+    function showAuthArea(mode) { const a = document.getElementById('authArea'); if (mode === 'signup') { a.innerHTML = `<h3>Sign Up</h3><form onsubmit="handleSignup(event)">Username:<br><input type="text" id="signupUsername"><br>Password:<br><input type="password" id="signupPassword"><br><br><input type="submit" value="Sign Up"><br><br><a href="#" onclick="showAuthArea('login')">Already have an account?</a></form>`; } else { a.innerHTML = `<h3>Member Login</h3><form onsubmit="handleLogin(event)">Username:<br><input type="text" id="loginUsername"><br>Password:<br><input type="password" id="loginPassword"><br><br><input type="submit" value="Login"></form><br><a href="#" onclick="handleGuestLogin()"><b>Play as Guest</b></a><br><a href="#" onclick="showAuthArea('signup')"><b>Sign Up! It's Free!</b></a>`; } }
+    function showLoggedInState(user) { document.getElementById('authArea').style.display = 'none'; if (user && !user.username.startsWith('Guest')) { document.getElementById('sculptTestMessagesLink').style.display = 'inline'; } const u = document.getElementById('userInfoArea'); u.style.display = 'block'; let h = `Hello, <b>${user.username}</b>!<br><br><img src="https://placehold.co/120x120/CCCCCC/000000?text=Avatar" alt="Your Avatar"><br><br>`; if (user.currencies) { h += `<table border="0" cellpadding="2" cellspacing="2" align="center" width="90%"><tr><td align="left">Diamonds:</td><td align="right">${user.currencies.diamonds}</td></tr><tr><td align="left">Sculptcoins:</td><td align="right">${user.currencies.sculptcoins}</td></tr><tr><td align="left">Points:</td><td align="right">${user.currencies.points}</td></tr></table>`; } h += `<a href="#" onclick="handleLogout()">Logout</a>`; if (!user.username.startsWith('Guest')) { h += `<hr><h3>Account Settings</h3><form onsubmit="handleChangePassword(event)"><b>Change Password</b><br><input type="password" placeholder="Old" id="oldPassword"><br><input type="password" placeholder="New" id="newPassword"><br><input type="password" placeholder="Confirm" id="confirmNewPassword"><br><input type="submit" value="Update Password"></form><br><form onsubmit="handleChangeUsername(event)"><b>Change Username (10 Diamonds)</b><br><input type="text" placeholder="New Username" id="newUsername"><br><input type="password" placeholder="Password" id="currentPasswordForUName"><br><input type="submit" value="Update Username"></form>`; } if (user.username === 'Admin') { h += renderAdminBannerControls(); } u.innerHTML = h; }
     async function handleSignup(e) { e.preventDefault(); const u = document.getElementById('signupUsername').value, p = document.getElementById('signupPassword').value; try { const r = await fetch('/signup',{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username:u,password:p})}), j = await r.json(); alert(j.message); if (r.ok) showAuthArea('login'); } catch (err) { alert('Signup failed: ' + err.message); } }
     async function handleLogin(e) { if(e) e.preventDefault(); const u = document.getElementById('loginUsername').value, p = document.getElementById('loginPassword').value; try { const r = await fetch("/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username:u,password:p})}), j = await r.json(); if(!r.ok)throw new Error(j.message); currentUser={username:j.username,currencies:j.currencies}; localStorage.setItem('playsculpt_user', JSON.stringify(currentUser)); showLoggedInState(currentUser); } catch(err){ alert("Login failed: "+err.message); } }
     async function handleGuestLogin() { try { const r = await fetch("/guestlogin"), j = await r.json(); if(!r.ok) throw new Error(j.message); currentUser={username:j.username}; localStorage.setItem('playsculpt_user', JSON.stringify(currentUser)); showLoggedInState(currentUser); } catch(c) { alert("Guest login failed: "+c.message); } }
     function handleLogout() { currentUser=null; localStorage.removeItem('playsculpt_user'); document.getElementById("userInfoArea").style.display="none"; document.getElementById('sculptTestMessagesLink').style.display = 'none'; document.getElementById("authArea").style.display="block"; showAuthArea("login"); navigateTo("home"); }
     async function handleChangePassword(e) { e.preventDefault(); const o=document.getElementById("oldPassword").value, n=document.getElementById("newPassword").value, c=document.getElementById("confirmNewPassword").value; if(n!==c){alert("New passwords do not match.");return} try{ const r=await fetch("/changepassword",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username:currentUser.username,oldPassword:o,newPassword:n})}), j=await r.json(); alert(j.message); if(r.ok)e.target.reset() }catch(err){alert("Error: "+err.message)} }
     async function handleChangeUsername(e) { e.preventDefault(); const n=document.getElementById("newUsername").value, p=document.getElementById("currentPasswordForUName").value; if(!confirm(`Change username to "${n}"? This costs 10 Diamonds.`))return; try{ const r=await fetch("/changeusername",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({currentUsername:currentUser.username,newUsername:n,password:p})}), j=await r.json(); alert(j.message); if(r.ok){ currentUser.username = j.updatedUser.username; currentUser.currencies = j.updatedUser.currencies; localStorage.setItem('playsculpt_user', JSON.stringify(currentUser)); showLoggedInState(currentUser) } }catch(err){alert("Error: "+err.message)} }
-    async function fetchAndRenderSpotlight() { try { const r = await fetch('/spotlight'), j = await r.json(), d = document.getElementById('forumSpotlight'), c = document.getElementById('spotlightContent'); if (j.success && j.post) { const p = j.post; let h = `<font size="2"><b>Title:</b> ${p.title}<br><b>By:</b> ${p.author}<br><br><i>${p.content.substring(0, 200)}...</i><br><br>`; if(currentUser && !currentUser.username.startsWith('Guest')) { h += `<input type="button" value="Go to Post" onclick="navigateTo('forum_post', '${p.id}')"> `; } if(currentUser && currentUser.username === 'Admin') { h += `<input type="button" value="Remove Spotlight" onclick="handleDeleteSpotlight()">`; } h += `</font>`; c.innerHTML = h; d.style.display = 'block'; } else { d.style.display = 'none'; } } catch (e) { console.error('Could not fetch spotlight:', e); document.getElementById('forumSpotlight').style.display = 'none'; } }
+    async function fetchAndRenderSpotlight() { try { const r = await fetch('/spotlight'), j = await r.json(), d = document.getElementById('forumSpotlight'), c = document.getElementById('spotlightContent'); if (j.success && j.post) { const p = j.post; let h = `<b>Title:</b> ${p.title}<br><b>By:</b> ${p.author}<br><br><i>${p.content.substring(0, 200)}...</i><br><br>`; if(currentUser && !currentUser.username.startsWith('Guest')) { h += `<input type="button" value="Go to Post" onclick="navigateTo('forum_post', '${p.id}')"> `; } if(currentUser && currentUser.username === 'Admin') { h += `<input type="button" value="Remove Spotlight" onclick="handleDeleteSpotlight()">`; } h += ``; c.innerHTML = h; d.style.display = 'block'; } else { d.style.display = 'none'; } } catch (e) { console.error('Could not fetch spotlight:', e); document.getElementById('forumSpotlight').style.display = 'none'; } }
 
     // --- 3D Editor Functions ---
     function initEditor() {
         const createView = document.getElementById('createView');
-        // REMOVED Run/Stop buttons from toolbar
         createView.innerHTML = `<div id="editorToolbar" style="padding: 5px; background: #f0f0f0; border-bottom: 1px solid #ccc;"><input type="button" value="Add Cube" onclick="addPrimitive('cube')"> <input type="button" value="Add Sphere" onclick="addPrimitive('sphere')"> | <input type="button" value="Move (W)" onclick="setTransformMode('translate')"> <input type="button" value="Rotate (E)" onclick="setTransformMode('rotate')"> <input type="button" value="Scale (R)" onclick="setTransformMode('scale')"> | <input type="button" value="Save" onclick="saveScene()"> <label for="loadSceneInput">Load:</label> <input type="file" id="loadSceneInput" onchange="loadScene(event)" accept=".json"></div><div id="editorContainer" style="position: absolute; top: 35px; left: 180px; right: 200px; bottom: 0;"></div><div style="position: absolute; top: 35px; left: 0; width: 175px; bottom: 0; border-right: 1px solid #ccc; overflow-y: auto; padding: 5px;"><b>Scene</b><hr><ul id="sceneList" style="list-style-type: none; padding-left: 5px; margin: 0;"></ul></div><div style="position: absolute; top: 35px; right: 0; width: 195px; bottom: 0; border-left: 1px solid #ccc; padding: 5px;"><b>Properties</b><hr><div id="propsContent">No object selected.</div></div>`;
         const container = document.getElementById('editorContainer');
         
