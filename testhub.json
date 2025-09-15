@@ -1,0 +1,196 @@
+{
+  "jobs": [
+    {
+      "id": "job_1757818461683",
+      "posterUsername": "0",
+      "title": "ewts",
+      "description": "ewts",
+      "gameLink": "li",
+      "requirements": "no",
+      "paymentAmount": 50,
+      "paymentMethod": "Points",
+      "status": "completed",
+      "testerUsername": "t",
+      "applicants": [
+        {
+          "username": "t"
+        }
+      ],
+      "chat": [
+        {
+          "sender": "0",
+          "text": "h",
+          "timestamp": "2025-09-14T03:03:09.116Z"
+        },
+        {
+          "sender": "t",
+          "text": "Hello! I'm interested in testing your game.",
+          "timestamp": "2025-09-14T03:03:30.985Z"
+        },
+        {
+          "sender": "0",
+          "text": "j",
+          "timestamp": "2025-09-14T03:04:03.522Z"
+        },
+        {
+          "sender": "System",
+          "text": "t has been accepted as the tester.",
+          "timestamp": "2025-09-14T03:04:13.793Z"
+        },
+        {
+          "sender": "0",
+          "text": "hi",
+          "timestamp": "2025-09-14T16:18:20.810Z"
+        }
+      ],
+      "reports": []
+    },
+    {
+      "id": "job_1757819435805",
+      "posterUsername": "t",
+      "title": "rteh",
+      "description": "rtehzdu",
+      "gameLink": "kli",
+      "requirements": "2",
+      "paymentAmount": 25,
+      "paymentMethod": "Points",
+      "status": "completed",
+      "testerUsername": "0",
+      "applicants": [
+        {
+          "username": "0"
+        }
+      ],
+      "chat": [
+        {
+          "sender": "0",
+          "text": "jy",
+          "timestamp": "2025-09-14T03:11:21.722Z"
+        },
+        {
+          "sender": "0",
+          "text": "Hello! I'm interested in testing your game.",
+          "timestamp": "2025-09-14T03:11:47.112Z"
+        },
+        {
+          "sender": "0",
+          "text": "k",
+          "timestamp": "2025-09-14T03:11:52.590Z"
+        },
+        {
+          "sender": "System",
+          "text": "0 has been accepted as the tester.",
+          "timestamp": "2025-09-14T03:12:19.906Z"
+        },
+        {
+          "sender": "System",
+          "text": "0 submitted a new test report: \"jt\"",
+          "timestamp": "2025-09-14T03:12:55.558Z"
+        },
+        {
+          "sender": "0",
+          "text": "i",
+          "timestamp": "2025-09-14T04:31:02.694Z"
+        }
+      ],
+      "reports": [
+        {
+          "id": "report_1757819575558",
+          "title": "jt",
+          "findings": "jy",
+          "attachments": [
+            "/uploads/1757819575552.png"
+          ],
+          "timestamp": "2025-09-14T03:12:55.558Z"
+        }
+      ]
+    },
+    {
+      "id": "job_1757863734918",
+      "posterUsername": "0",
+      "title": "hi",
+      "description": "o",
+      "gameLink": "ooo",
+      "requirements": "5",
+      "paymentAmount": 25,
+      "paymentMethod": "Points",
+      "status": "completed",
+      "testerUsername": "t",
+      "applicants": [
+        {
+          "username": "t"
+        }
+      ],
+      "chat": [
+        {
+          "sender": "t",
+          "text": "Hello! I'm interested in testing your game.",
+          "timestamp": "2025-09-14T15:29:32.508Z"
+        },
+        {
+          "sender": "System",
+          "text": "t has been accepted as the tester.",
+          "timestamp": "2025-09-14T15:30:20.168Z"
+        },
+        {
+          "sender": "System",
+          "text": "t submitted a new test report: \"good\"",
+          "timestamp": "2025-09-14T15:31:16.826Z"
+        }
+      ],
+      "reports": [
+        {
+          "id": "report_1757863876826",
+          "title": "good",
+          "findings": "ji",
+          "attachments": [
+            "/uploads/1757863876817.png"
+          ],
+          "timestamp": "2025-09-14T15:31:16.826Z"
+        }
+      ]
+    },
+    {
+      "id": "job_1757867464818",
+      "posterUsername": "0",
+      "title": "a",
+      "description": "a",
+      "gameLink": "a",
+      "requirements": "a",
+      "paymentAmount": 2,
+      "paymentMethod": "Points",
+      "status": "open",
+      "testerUsername": null,
+      "applicants": [],
+      "chat": [
+        {
+          "sender": "0",
+          "text": "h",
+          "timestamp": "2025-09-15T02:03:16.201Z"
+        },
+        {
+          "sender": "0",
+          "text": "1",
+          "timestamp": "2025-09-15T02:25:28.601Z"
+        },
+        {
+          "sender": "0",
+          "text": "d",
+          "timestamp": "2025-09-15T02:47:51.835Z"
+        },
+        {
+          "sender": "0",
+          "text": "2",
+          "timestamp": "2025-09-15T03:01:13.732Z"
+        }
+      ],
+      "reports": []
+    }
+  ],
+  "escrow": {
+    "job_1757867464818": {
+      "amount": 2,
+      "currency": "Points"
+    }
+  }
+}

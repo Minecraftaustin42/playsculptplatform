@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Playsculpt - Powering Imagination</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/TransformControls.js"></script>
+</head>
+
+<body bgcolor="#E3E3E3" text="#000000" link="#0000FF" vlink="#0000FF" alink="#0000FF">
+
+  <div id="adminBanner" style="display: none; text-align: center; padding: 5px;"></div>
+
+  <table width="960" border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
+    <tbody>
+      <tr>
+        <td colspan="2" bgcolor="#0053A1">
+          <table width="100%" border="0" cellpadding="5" cellspacing="0">
+            <tr>
+              <td width="200">
+                <font face="Verdana, Arial, sans-serif" color="#FFFFFF" size="6">
+                  <b>Playsculpt</b>
+                </font>
+              </td>
+              <td align="right">
+                <font face="Verdana, Arial, sans-serif" color="#FFFFFF" size="2">
+                  <a href="#" style="color:#FFFFFF; text-decoration:none;" onclick="navigateTo('home')"><b>My Playsculpt</b></a> |
+                  <a href="#" style="color:#FFFFFF; text-decoration:none;" onclick="navigateTo('create')"><b>Create</b></a> |
+                  <span id="sculptTestMessagesLink" style="display:none;"><a href="#" style="color:#FFFFFF; text-decoration:none;" onclick="navigateTo('sculpt_test_messages')"><b>SculptTest Messages</b></a> |</span>
+                  <a href="#" style="color:#FFFFFF; text-decoration:none;" onclick="navigateTo('games')"><b>Games</b></a> |
+                  <a href="#" style="color:#FFFFFF; text-decoration:none;"><b>Catalog</b></a> |
+                  <a href="#" style="color:#FFFFFF; text-decoration:none;" onclick="showForumsView()"><b>Forums</b></a> |
+                  <a href="#" style="color:#FFFFFF; text-decoration:none;"><b>Search</b></a>
+                </font>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td colspan="2" height="10"></td>
+      </tr>
+
+      <tr>
+        <td width="220" valign="top" align="center" style="padding-left:10px; padding-right:10px;">
+          
+          <div id="authArea">
+              </div>
+          
+          <div id="userInfoArea" align="center" style="display:none;">
+             </div>
+
+          <hr width="90%">
+
+          <font face="Verdana, Arial, sans-serif" size="3">
+            <b>Playsculpt News</b>
+          </font>
+          <br>
+          <font face="Verdana, Arial, sans-serif" size="2">
+            <p align="left">
+              - Color Picker added to Create mode!<br>
+              - Summer building contest begins.<br>
+              - Trading system is now LIVE!
+            </p>
+          </font>
+
+        </td>
+
+        <td valign="top" style="padding-right:10px;">
+          <div id="mainContent">
+            <table width="100%" border="1" bordercolor="#CCCCCC" cellpadding="10" cellspacing="0">
+              <tr><td><font face="Verdana, Arial, sans-serif" size="4"><b>Welcome to Playsculpt!</b></font><br><font face="Verdana, Arial, sans-serif" size="2">The ultimate 3D platform for playing, creating, and sharing experiences. What will you build today?</font></td></tr>
+            </table><br>
+            <div id="forumSpotlight" style="display:none; border: 1px solid #999999; padding: 10px;"><font face="Verdana, Arial, sans-serif" size="3"><b>Forum Spotlight</b></font><hr><div id="spotlightContent"></div></div><br>
+            <font face="Verdana, Arial, sans-serif" size="3"><b>Featured Games</b></font><hr>
+            <table width="100%" border="0" cellpadding="5" cellspacing="5">
+              <tr align="center">
+                <td width="33%" valign="top"><img src="https://placehold.co/150x100/CCCCCC/000000?text=Brick+Battle" alt="Brick Battle Game"><br><font face="Verdana, Arial, sans-serif" size="2"><b><a href="#">Brick Battle Arena</a></b><br>By: Constructor_Carl</font><br><input type="button" value="Play" onclick="launchGame('Brick Battle Arena')"></td>
+                <td width="33%" valign="top"><img src="https://placehold.co/150x100/DDDDDD/000000?text=Obby" alt="Escape the Obby Game"><br><font face="Verdana, Arial, sans-serif" size="2"><b><a href="#">Escape the Treacherous Obby</a></b><br>By: SpeedySamantha</font><br><input type="button" value="Play" onclick="launchGame('Escape the Treacherous Obby')"></td>
+                <td width="33%" valign="top"><img src="https://placehold.co/150x100/EEEEEE/000000?text=Tycoon" alt="Tycoon Game"><br><font face="Verdana, Arial, sans-serif" size="2"><b><a href="#">Build Your Dream House Tycoon</a></b><br>By: TycoonKing</font><br><input type="button" value="Play" onclick="launchGame('Build Your Dream House Tycoon')"></td>
+              </tr>
+            </table>
+          </div>
+          <div id="forumView" style="display:none;"></div>
+          <div id="sculptTestHubView" style="display:none;"></div>
+          <div id="createView" style="display:none; height: 600px; position: relative;"></div>
+        </td>
+      </tr>
+      
+      <tr>
+        <td colspan="2" height="50" align="center" valign="middle">
+          <hr>
+          <font face="Verdana, Arial, sans-serif" size="1" color="#666666">Copyright &copy; 2012 Playsculpt Corporation. All Rights Reserved.<br><a href="#">About Us</a> | <a href="#">Jobs</a> | <a href="#">Terms of Service</a> | <a href="#">Privacy Policy</a></font>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <script type="text/javascript">
+    // --- Global State ---
+    let currentUser = null;
+    let forumDataCache = null;
+    let userStatsCache = null;
+    let testHubCache = null;
+    let adminBannerCache = null;
+    let editorInitialized = false;
+    let editorScene, editorCamera, editorRenderer, orbitControls, transformControls, raycaster;
+    let editorObjects = []; 
+    let selectedObject = null;
+
+    // --- Admin Banner ---
+    async function fetchAndRenderBanner() {
+        try {
+            const response = await fetch('/admin/banner');
+            const result = await response.json();
+            const bannerDiv = document.getElementById('adminBanner');
+            if (result.success && result.banner) {
+                adminBannerCache = result.banner;
+                if (adminBannerCache.enabled) {
+                    bannerDiv.style.display = 'block';
+                    bannerDiv.style.backgroundColor = adminBannerCache.backgroundColor;
+                    bannerDiv.style.color = adminBannerCache.textColor;
+                    bannerDiv.style.fontSize = adminBannerCache.fontSize + 'px';
+                    bannerDiv.innerHTML = adminBannerCache.message;
+                } else {
+                    bannerDiv.style.display = 'none';
+                }
+            } else {
+                bannerDiv.style.display = 'none';
+            }
+        } catch (error) {
+            console.error("Could not fetch admin banner:", error);
+        }
+    }
+
+    function renderAdminBannerControls() {
+        const banner = adminBannerCache;
+        if (!banner) return '';
+        let html = `<hr width="90%"><font size="2"><b>Admin Banner Controls</b></font><br>`;
+        html += `<form onsubmit="handleUpdateBanner(event)">`;
+        html += `Message:<br><input type="text" id="bannerMessage" value="${banner.message}" style="width: 150px;"><br>`;
+        html += `BG Color: <input type="color" id="bannerBgColor" value="${banner.backgroundColor}"><br>`;
+        html += `Text Color: <input type="color" id="bannerTextColor" value="${banner.textColor}"><br>`;
+        html += `Font Size (px): <input type="number" id="bannerFontSize" value="${banner.fontSize}" style="width: 50px;"><br>`;
+        html += `<input type="checkbox" id="bannerEnabled" ${banner.enabled ? 'checked' : ''}> Enable Banner<br>`;
+        html += `<input type="submit" value="Update Banner">`;
+        html += `</form>`;
+        return html;
+    }
+
+    async function handleUpdateBanner(event) {
+        event.preventDefault();
+        const bannerData = {
+            adminUsername: currentUser.username,
+            message: document.getElementById('bannerMessage').value,
+            backgroundColor: document.getElementById('bannerBgColor').value,
+            textColor: document.getElementById('bannerTextColor').value,
+            fontSize: document.getElementById('bannerFontSize').value,
+            enabled: document.getElementById('bannerEnabled').checked
+        };
+        try {
+            const response = await fetch('/admin/banner', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(bannerData)
+            });
+            const result = await response.json();
+            alert(result.message);
+            if(result.success) {
+                fetchAndRenderBanner();
+            }
+        } catch(error) {
+            alert('Error updating banner: ' + error.message);
+        }
+    }
+
+    // --- Forum Rendering (No Changes) ---
+    async function showForumsView() {
+        if (!currentUser || currentUser.username.startsWith('Guest')) {
+            alert('You must be logged in to a registered account to access the forums.');
+            return;
+        }
+        navigateTo('forums');
+    }
+    async function renderForum(view = 'categories', id = null) {
+        const forumViewDiv = document.getElementById('forumView');
+        try {
+            const response = await fetch('/forums');
+            if (!response.ok) throw new Error('Failed to fetch forum data.');
+            const data = await response.json();
+            forumDataCache = data.forumData;
+            userStatsCache = data.userStats;
+        } catch (error) {
+            console.error('Error fetching forums:', error);
+            forumViewDiv.innerHTML = '<font color="red">Could not load forums. Please try again later.</font>';
+            return;
+        }
+        if (view === 'categories') renderCategories();
+        if (view === 'posts') renderPosts(id);
+        if (view === 'post_view') renderPostView(id);
+        if (view === 'create_post') renderCreatePostForm();
+    }
+    function renderCategories() {
+        const categories = forumDataCache.categories;
+        let html = '<font face="Verdana, Arial, sans-serif" size="3"><b>Forum Categories</b></font>';
+        html += ' <input type="button" value="Create Post" onclick="renderForum(\'create_post\')">';
+        html += '<hr>';
+        html += '<div style="border: 1px solid #ccc; padding: 8px; margin-bottom: 10px; background-color: #f9f9f9;"><font face="Verdana, Arial, sans-serif" size="2"><b>Forum Guidelines</b></font><br><font face="Verdana, Arial, sans-serif" size="1">Help us keep forums organized and on topic... Moderators have the right to relocate where posts go... Breaking these rules will result in either a ban or warning...</font></div>';
+        html += '<table width="100%" border="0" cellpadding="5" cellspacing="0">';
+        if (categories && categories.length > 0) {
+            categories.forEach(cat => {
+                html += `<tr><td><a href="#" onclick="renderForum('posts', ${cat.id})">${cat.name}</a>`;
+                if (cat.label) {
+                    html += `<br><font size="1" color="#666666"><i>${cat.label}</i></font>`;
+                }
+                html += `</td></tr>`;
+            });
+        } else {
+             html += '<tr><td>No categories available.</td></tr>';
+        }
+        html += '</table>';
+        document.getElementById('forumView').innerHTML = html;
+    }
+    function renderPosts(categoryId) {
+        const category = forumDataCache.categories.find(c => c.id === categoryId);
+        if (category && category.special === 'testhub_link') {
+            navigateTo('sculpt_test_hub');
+            return;
+        }
+        const posts = forumDataCache.posts.filter(p => p.categoryId === categoryId);
+        let html = `<font face="Verdana, Arial, sans-serif" size="3"><b>${category.name}</b></font> <input type="button" value="&laquo; Back to Categories" onclick="renderForum()"> <input type="button" value="Create Post" onclick="renderForum(\'create_post\')"><hr>`;
+        if(category.label) {
+            html += `<p><font size="2" color="#333333"><i>${category.label}</i></font></p><hr>`;
+        }
+        html += '<table width="100%" border="0" cellpadding="5" cellspacing="0">';
+        if (posts.length > 0) {
+            posts.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).forEach(post => {
+                let likesText = (category.special === 'no_replies_likeable') ? ` - Likes: ${(post.likes || []).length}` : '';
+                html += `<tr><td><a href="#" onclick="renderForum('post_view', '${post.id}')">${post.title}</a> by ${renderUsernameWithTooltip(post.author)}${likesText}</td></tr>`;
+            });
+        } else {
+            html += '<tr><td>No posts in this category yet.</td></tr>';
+        }
+        html += '</table>';
+        document.getElementById('forumView').innerHTML = html;
+    }
+    function renderPostView(postId) {
+        const post = forumDataCache.posts.find(p => p.id === postId);
+        if (!post) { document.getElementById('forumView').innerHTML = 'Post not found.'; return; }
+        const category = forumDataCache.categories.find(c => c.id === post.categoryId);
+        let html = `<input type="button" value="&laquo; Back to Posts" onclick="renderForum('posts', ${post.categoryId})"><hr><h3>${post.title}</h3><p>By ${renderUsernameWithTooltip(post.author)} on ${new Date(post.timestamp).toLocaleString()}</p>`;
+        if (currentUser && currentUser.username === 'Admin') {
+            html += `<div style="border: 1px dashed red; padding: 5px; margin-bottom: 10px;"><b>Admin Controls:</b><br><input type="button" value="Award Hall of Fame" onclick="handleAwardBadge('${post.author}')"> <input type="button" value="Give Spotlight" onclick="handleAwardSpotlight('${post.id}')"> <input type="button" value="Relocate Post" onclick="showRelocateUI('${post.id}')"> <input type="button" value="Delete Post" onclick="handleDeletePost('${post.id}')"><div id="relocateUi-${post.id}" style="display:none; margin-top: 5px;"></div></div>`;
+        }
+        if (post.imageUrl) {
+            html += `<img src="${post.imageUrl}" alt="User uploaded image" style="max-width: 400px; border: 1px solid #ccc; padding: 5px;"><br><br>`;
+        }
+        html += `<p style="border:1px solid #ccc; padding:10px;">${post.content.replace(/\n/g, '<br>')}</p>`;
+        if (category.special === 'no_replies_likeable') {
+            const likesCount = (post.likes || []).length;
+            const hasLiked = post.likes && post.likes.includes(currentUser.username);
+            html += `<hr><p><b>Likes: ${likesCount}</b></p>`;
+            if (!hasLiked) {
+                html += `<input type="button" value="Like Post" onclick="handleLikePost('${post.id}')">`;
+            } else {
+                html += `<p><i>You have liked this post.</i></p>`;
+            }
+        } else {
+            html += '<hr><h4>Replies</h4>';
+            if (post.replies && post.replies.length > 0) {
+                post.replies.forEach(reply => {
+                    html += `<div style="border:1px solid #ddd; padding:5px; margin-bottom:5px;"><p>${renderUsernameWithTooltip(reply.author)} says:</p><p>${reply.content.replace(/\n/g, '<br>')}</p>`;
+                    if (currentUser && currentUser.username === 'Admin') {
+                        html += `<input type="button" value="Delete Reply" onclick="handleDeleteReply('${post.id}', '${reply.id}')">`;
+                    }
+                    html += `</div>`;
+                });
+            } else {
+                html += '<p>No replies yet.</p>';
+            }
+            html += `<hr><h5>Reply to this post:</h5>`;
+            if (category.special === 'counting_game') {
+                const lastReply = post.replies[post.replies.length - 1];
+                const nextNumber = lastReply ? parseInt(lastReply.content, 10) + 1 : 1;
+                html += `<p><i>Next number must be: <b>${nextNumber}</b>. Only enter numbers.</i></p>`;
+            }
+            html += `<textarea id="replyContent" rows="5" style="width:98%;" maxlength="1000"></textarea><br><input type="button" value="Post Reply" onclick="handleReply('${post.id}')">`;
+        }
+        document.getElementById('forumView').innerHTML = html;
+    }
+    function renderCreatePostForm() {
+        let html = '<input type="button" value="&laquo; Back to Categories" onclick="renderForum()"><h3>Create a New Post</h3><form id="createPostForm" onsubmit="handleCreatePost(event)">Title (1-75 chars):<br><input type="text" id="postTitle" name="title" style="width:98%;" maxlength="75" required><br><br>Category:<br><select id="postCategory" name="categoryId" onchange="toggleImageUpload(this.value)">';
+        forumDataCache.categories.forEach(cat => {
+            html += `<option value="${cat.id}">${cat.name}</option>`;
+        });
+        html += '</select><br><br><div id="imageUploadSection" style="display:none;">Image (Optional):<br><input type="file" id="postImage" name="image"><br><br></div>Content (max 2000 chars):<br><textarea id="postContent" name="content" rows="10" style="width:98%;" maxlength="2000" required></textarea><br><br><input type="submit" value="Submit Post"></form>';
+        document.getElementById('forumView').innerHTML = html;
+        toggleImageUpload(document.getElementById('postCategory').value);
+    }
+    function toggleImageUpload(categoryId) {
+        const category = forumDataCache.categories.find(c => c.id == categoryId);
+        document.getElementById('imageUploadSection').style.display = (category && category.special === 'image_upload') ? 'block' : 'none';
+    }
+    function renderUsernameWithTooltip(username) {
+        const stats = userStatsCache[username];
+        if (!stats) return username;
+        const tooltipText = `Posts: ${stats.postCount}\nReplies: ${stats.replyCount}\nBadges: ${stats.badges.join(', ') || 'None'}`;
+        return `<span title="${tooltipText}" style="cursor:help; border-bottom:1px dotted #000;">${username}</span>`;
+    }
+    async function handleCreatePost(event) {
+        event.preventDefault();
+        const form = document.getElementById('createPostForm');
+        const formData = new FormData(form);
+        formData.append('username', currentUser.username);
+        try {
+            const response = await fetch('/forums/post', { method: 'POST', body: formData });
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.message);
+            alert(`Post created! ${result.badgeAwardedMessage || ''}`);
+            renderForum('post_view', result.post.id);
+        } catch (error) {
+            alert('Error creating post: ' + error.message);
+        }
+    }
+    async function handleReply(postId) {
+        const content = document.getElementById('replyContent').value;
+        if (!content.trim()) { alert('Reply cannot be empty.'); return; }
+        try {
+            const response = await fetch('/forums/reply', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: currentUser.username, content, postId }) });
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.message);
+            renderForum('post_view', postId);
+        } catch (error) {
+            alert('Error posting reply: ' + error.message);
+        }
+    }
+    async function handleLikePost(postId) {
+        try {
+            const response = await fetch('/forums/like', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: currentUser.username, postId }) });
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.message);
+            alert(result.message);
+            renderForum('post_view', postId);
+        } catch (error) {
+            alert('Error liking post: ' + error.message);
+        }
+    }
+    async function handleAwardBadge(targetUsername) {
+        if (!confirm(`Award "Forum Hall of Fame" to ${targetUsername}?`)) return;
+        try {
+            const response = await fetch('/admin/award-badge', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ adminUsername: currentUser.username, targetUsername }) });
+            const result = await response.json();
+            alert(result.message);
+        } catch (error) {
+            alert('An error occurred: ' + error.message);
+        }
+    }
+    async function handleAwardSpotlight(postId) {
+        if (!confirm('Make this post the Forum Spotlight?')) return;
+        try {
+            const response = await fetch('/admin/award-spotlight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ adminUsername: currentUser.username, postId }) });
+            const result = await response.json();
+            alert(result.message);
+            if(result.success) fetchAndRenderSpotlight();
+        } catch (error) {
+             alert('An error occurred: ' + error.message);
+        }
+    }
+    async function handleDeleteSpotlight() {
+        if (!confirm('Remove the Forum Spotlight?')) return;
+        try {
+            const response = await fetch('/admin/delete-spotlight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ adminUsername: currentUser.username }) });
+            const result = await response.json();
+            alert(result.message);
+            if(result.success) fetchAndRenderSpotlight();
+        } catch (error) {
+            alert('An error occurred: ' + error.message);
+        }
+    }
+    async function handleDeletePost(postId) {
+        if (!confirm('PERMANENTLY delete this post and all its replies?')) return;
+        try {
+            const response = await fetch('/admin/delete-post', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ adminUsername: currentUser.username, postId }) });
+            const result = await response.json();
+            alert(result.message);
+            if(result.success) renderForum('categories');
+        } catch(error) {
+            alert('An error occurred: ' + error.message);
+        }
+    }
+    async function handleDeleteReply(postId, replyId) {
+        if (!confirm('PERMANENTLY delete this reply?')) return;
+        try {
+            const response = await fetch('/admin/delete-reply', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ adminUsername: currentUser.username, postId, replyId }) });
+            const result = await response.json();
+            alert(result.message);
+            if(result.success) renderForum('post_view', postId);
+        } catch(error) {
+            alert('An error occurred: ' + error.message);
+        }
+    }
+    function showRelocateUI(postId) {
+        const relocateDiv = document.getElementById(`relocateUi-${postId}`);
+        if(relocateDiv.style.display === 'block') { relocateDiv.style.display = 'none'; return; }
+        let selectHtml = '<select id="relocateCategorySelect">';
+        forumDataCache.categories.forEach(c => { selectHtml += `<option value="${c.id}">${c.name}</option>`; });
+        selectHtml += `</select> <input type="button" value="Confirm" onclick="handleRelocatePost('${postId}')">`;
+        relocateDiv.innerHTML = selectHtml;
+        relocateDiv.style.display = 'block';
+    }
+    async function handleRelocatePost(postId) {
+        const newCategoryId = document.getElementById('relocateCategorySelect').value;
+        const categoryName = forumDataCache.categories.find(c => c.id == newCategoryId).name;
+        if (!confirm(`Move post to "${categoryName}"?`)) return;
+        try {
+            const response = await fetch('/admin/relocate-post', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ adminUsername: currentUser.username, postId, newCategoryId }) });
+            const result = await response.json();
+            alert(result.message);
+            if (result.success) renderForum('categories');
+        } catch (error) {
+            alert('An error occurred: ' + error.message);
+        }
+    }
+    
+    // --- SculptTest Hub (No Changes) ---
+    function renderSculptTestHub(view = 'main', id = null) {
+        if (!currentUser || currentUser.username.startsWith('Guest')) {
+            alert('You must be logged in to access the SculptTest Hub.');
+            navigateTo('home');
+            return;
+        }
+        navigateTo('sculpt_test_hub_view');
+        const hubView = document.getElementById('sculptTestHubView');
+        if (view === 'main') {
+             hubView.innerHTML = `<h3>Welcome to the SculptTest Hub</h3><p>Post jobs or find jobs to earn currency!</p><hr><input type="button" value="Post a Testing Job" onclick="renderSculptTestHub('post_job_form')"> <input type="button" value="Find Testing Jobs" onclick="renderSculptTestHub('find_jobs')">`;
+        }
+        if (view === 'post_job_form') {
+            hubView.innerHTML = `<h3>Post a Testing Job</h3><p>Post a job for your game...</p><hr><input type="button" value="&laquo; Back to Hub" onclick="renderSculptTestHub('main')"><br><br><form onsubmit="handlePostJob(event)">Job Title:<br><input type="text" id="jobTitle" required style="width: 80%;"><br><br>Description:<br><textarea id="jobDesc" required rows="5" style="width: 80%;"></textarea><br><br>Game Link:<br><input type="text" id="jobGameLink" required style="width: 80%;"><br><br>Requirements:<br><input type="text" id="jobReqs" style="width: 80%;"><br><br>Payment:<br><input type="number" id="jobAmount" required min="1"> <select id="jobPaymentMethod"><option value="Points">Points</option><option value="SculptCoins">SculptCoins</option></select><br><br><input type="checkbox" id="jobTos" required> I agree to the ToS.<br><br><input type="submit" value="Post Job & Deposit Escrow"></form>`;
+        }
+        if (view === 'find_jobs') { renderJobFindList(); }
+        if (view === 'messages') { renderMyMessages(); }
+        if (view === 'chat') { renderChatView(id); }
+    }
+    async function renderJobFindList() {
+        const hubView = document.getElementById('sculptTestHubView');
+        hubView.innerHTML = '<h3>Finding Jobs...</h3>';
+        try {
+            const response = await fetch('/testhub/jobs');
+            const result = await response.json();
+            if (!result.success) throw new Error(result.message);
+            testHubCache = result.jobs;
+            let html = `<h3>Available Jobs</h3> <input type="button" value="&laquo; Back" onclick="renderSculptTestHub('main')"><hr>`;
+            if (result.jobs.length === 0) {
+                html += '<p>No jobs available.</p>';
+            } else {
+                result.jobs.forEach(job => {
+                    html += `<div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;"><b>${job.title}</b> by ${job.posterUsername}<br>Paying: ${job.paymentAmount} ${job.paymentMethod}<br><p>${job.description.substring(0, 100)}...</p><input type="button" value="View & Apply" onclick="renderChatView('${job.id}')"></div>`;
+                });
+            }
+            hubView.innerHTML = html;
+        } catch (e) {
+            hubView.innerHTML = `<font color="red">Error: ${e.message}</font>`;
+        }
+    }
+    async function renderMyMessages() {
+        const hubView = document.getElementById('sculptTestHubView');
+        hubView.innerHTML = '<h3>Loading Messages...</h3>';
+        try {
+            const response = await fetch(`/testhub/messages?username=${currentUser.username}`);
+            const result = await response.json();
+            if(!result.success) throw new Error(result.message);
+            testHubCache = result.jobs;
+            let html = `<h3>My Messages</h3> <input type="button" value="&laquo; Back" onclick="renderSculptTestHub('main')"><hr>`;
+            if(result.jobs.length === 0) {
+                html += "<p>No active jobs or applications.</p>";
+            } else {
+                 result.jobs.forEach(job => {
+                    let role = job.posterUsername === currentUser.username ? 'Poster' : 'Applicant/Tester';
+                    html += `<div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;"><b>${job.title}</b> (Role: ${role})<br>Status: <b>${job.status}</b><br><input type="button" value="Open Chat" onclick="renderChatView('${job.id}')"></div>`;
+                });
+            }
+            hubView.innerHTML = html;
+        } catch(e) {
+             hubView.innerHTML = `<font color="red">Error: ${e.message}</font>`;
+        }
+    }
+    async function renderChatView(jobId) {
+        const hubView = document.getElementById('sculptTestHubView');
+        let job = testHubCache ? testHubCache.find(j => j.id === jobId) : null;
+        if (!job) {
+            const response = await fetch(`/testhub/messages?username=${currentUser.username}`);
+            const result = await response.json();
+            if(!result.success) { hubView.innerHTML = 'Error: Could not load job details.'; return; }
+            testHubCache = result.jobs;
+            job = testHubCache.find(j => j.id === jobId);
+            if(!job) { hubView.innerHTML = 'Error: Job not found.'; return; }
+        }
+        const isPoster = currentUser.username === job.posterUsername, isTester = currentUser.username === job.testerUsername, isApplicant = job.applicants.some(a => a.username === currentUser.username);
+        let html = `<input type="button" value="&laquo; Back" onclick="navigateTo('sculpt_test_messages')"><hr><h3>${job.title}</h3><p><b>Desc:</b> ${job.description}</p><p><b>Link:</b> <a href="${job.gameLink}" target="_blank">${job.gameLink}</a></p><p><b>Reqs:</b> ${job.requirements||'None'}</p><p><b>Pay:</b> ${job.paymentAmount} ${job.paymentMethod}</p>`;
+        if (isPoster && job.reports && job.reports.length > 0) {
+            html += `<hr><h4>Submitted Reports</h4>`;
+            job.reports.forEach(r => {
+                html += `<div style="border: 1px solid #ddd; padding: 5px; margin-bottom: 5px;"><b>Report: ${r.title}</b><br><p>${r.findings}</p>`;
+                if (r.attachments && r.attachments.length > 0) {
+                    html += `Attachments: `;
+                    r.attachments.forEach(a => { html += `<a href="${a}" target="_blank">File</a> `; });
+                }
+                html += `</div>`;
+            });
+        }
+        html += `<hr><h4>Chat</h4><div id="chatBox" style="height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 5px; margin-bottom: 10px;">`;
+        job.chat.forEach(m => { html += `<b>${m.sender}:</b> ${m.text}<br>`; });
+        html += `</div><textarea id="chatMessage" rows="2" style="width: 80%;"></textarea><input type="button" value="Send" onclick="handleSendMessage('${job.id}')">`;
+        if (isPoster && job.status === 'open') {
+             html += `<hr><h4>Applicants</h4>`;
+             if (job.applicants.length > 0) { job.applicants.forEach(a => { html += `<p>${a.username} <input type="button" value="Accept" onclick="handleAcceptApplicant('${job.id}', '${a.username}')"></p>`; }); }
+             else { html += `<p>No applicants yet.</p>` }
+        }
+        if (isTester && job.status === 'in_progress') {
+            html += `<hr><h4>Submit Report</h4><form id="reportForm" onsubmit="handleSubmitReport(event, '${job.id}')">Title:<br><input type="text" name="title" required style="width:80%;"><br><br>Findings:<br><textarea name="findings" required rows="5" style="width:80%;"></textarea><br><br>Attachments:<br><input type="file" name="attachments" multiple><br><br><input type="submit" value="Submit"></form>`;
+        }
+        if (isPoster && job.status === 'in_progress') {
+             html += `<hr><input type="button" value="Mark Complete & Release Payment" onclick="handleCompleteJob('${job.id}')">`;
+        }
+        if (!isPoster && !isTester && !isApplicant && job.status === 'open') {
+            html += `<hr><input type="button" value="Apply for Job" onclick="handleApplyForJob('${job.id}')">`;
+        }
+        hubView.innerHTML = html;
+        document.getElementById('chatBox').scrollTop = document.getElementById('chatBox').scrollHeight;
+    }
+    async function handlePostJob(event) {
+        event.preventDefault();
+        const jobData = { username: currentUser.username, title: document.getElementById('jobTitle').value, description: document.getElementById('jobDesc').value, gameLink: document.getElementById('jobGameLink').value, requirements: document.getElementById('jobReqs').value, amount: document.getElementById('jobAmount').value, paymentMethod: document.getElementById('jobPaymentMethod').value };
+        if (!confirm(`This will deduct ${jobData.amount} ${jobData.paymentMethod} and place it in escrow. Proceed?`)) return;
+        try {
+            const response = await fetch('/testhub/job', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(jobData) });
+            const result = await response.json();
+            alert(result.message);
+            if (result.success) {
+                const currencyKey = jobData.paymentMethod === 'SculptCoins' ? 'sculptcoins' : 'points';
+                currentUser.currencies[currencyKey] -= parseInt(jobData.amount, 10);
+                showLoggedInState(currentUser);
+                navigateTo('sculpt_test_messages');
+            }
+        } catch (error) { alert('Error: ' + error.message); }
+    }
+    async function handleApplyForJob(jobId) {
+        if (!currentUser) return;
+        try {
+            const response = await fetch('/testhub/apply', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: currentUser.username, jobId }) });
+            const result = await response.json();
+            alert(result.message);
+            if (result.success) { testHubCache = null; renderChatView(jobId); }
+        } catch (e) { alert('Error: ' + e.message); }
+    }
+    async function handleSendMessage(jobId) {
+        const messageInput = document.getElementById('chatMessage');
+        const text = messageInput.value.trim();
+        if (!text) return;
+        try {
+            const response = await fetch('/testhub/message', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: currentUser.username, text, jobId }) });
+            const result = await response.json();
+            if (!result.success) { alert("Error: " + result.message); return; }
+            messageInput.value = '';
+            testHubCache = null;
+            renderChatView(jobId);
+        } catch (e) { alert('Error: ' + e.message); }
+    }
+    async function handleAcceptApplicant(jobId, applicantUsername) {
+        if (!confirm(`Accept ${applicantUsername}? This closes the job to others.`)) return;
+         try {
+            const response = await fetch('/testhub/accept', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ adminUsername: currentUser.username, applicantUsername, jobId }) });
+            const result = await response.json();
+            alert(result.message);
+            if (result.success) { testHubCache = null; renderChatView(jobId); }
+        } catch (e) { alert('Error: ' + e.message); }
+    }
+    async function handleSubmitReport(event, jobId) {
+        event.preventDefault();
+        const form = document.getElementById('reportForm');
+        const formData = new FormData(form);
+        formData.append('username', currentUser.username);
+        formData.append('jobId', jobId);
+        try {
+            const response = await fetch('/testhub/submit-report', { method: 'POST', body: formData });
+            const result = await response.json();
+            alert(result.message);
+            if (result.success) { testHubCache = null; renderChatView(jobId); }
+        } catch (err) { alert('Error: ' + err.message); }
+    }
+    async function handleCompleteJob(jobId) {
+        if (!confirm("Are you sure you want to release payment? This is final.")) return;
+        try {
+            const response = await fetch('/testhub/complete-job', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ adminUsername: currentUser.username, jobId }) });
+            const result = await response.json();
+            alert(result.message);
+            if (result.success) navigateTo('sculpt_test_messages');
+        } catch (e) { alert('Error: ' + e.message); }
+    }
+
+    // --- Page Navigation & Content Switching ---
+    function navigateTo(page, id = null) {
+        document.getElementById('mainContent').style.display = 'none';
+        document.getElementById('forumView').style.display = 'none';
+        document.getElementById('sculptTestHubView').style.display = 'none';
+        document.getElementById('createView').style.display = 'none';
+        if (page === 'home' || page === 'games') { document.getElementById('mainContent').style.display = 'block'; }
+        else if (page === 'create') {
+            document.getElementById('createView').style.display = 'block';
+            if (!editorInitialized) initEditor(); else { onEditorWindowResize(); animateEditor(); }
+        }
+        else if (page === 'forums') { document.getElementById('forumView').style.display = 'block'; renderForum(); }
+        else if (page === 'forum_post' && id) { document.getElementById('forumView').style.display = 'block'; renderForum('post_view', id); }
+        else if (page === 'sculpt_test_hub') { renderSculptTestHub('main'); }
+        else if (page === 'sculpt_test_hub_view') { document.getElementById('sculptTestHubView').style.display = 'block'; }
+        else if (page === 'sculpt_test_messages') { renderSculptTestHub('messages'); }
+    }
+
+    // --- Authentication & UI ---
+    function launchGame(gameName) { alert("Starting " + gameName + "..."); }
+    function showAuthArea(mode) { const a = document.getElementById('authArea'); if (mode === 'signup') { a.innerHTML = `<font face="Verdana, Arial, sans-serif" size="3"><b>Sign Up</b></font><br><br><form onsubmit="handleSignup(event)"><font size="2">Username:</font><br><input type="text" id="signupUsername" style="width:150px;"><br><font size="2">Password:</font><br><input type="password" id="signupPassword" style="width:150px;"><br><br><input type="submit" value="Sign Up"><br><br><a href="#" onclick="showAuthArea('login')">Already have an account?</a></form>`; } else { a.innerHTML = `<font face="Verdana, Arial, sans-serif" size="3"><b>Member Login</b></font><br><br><form onsubmit="handleLogin(event)"><font size="2">Username:</font><br><input type="text" id="loginUsername" style="width:150px;"><br><font size="2">Password:</font><br><input type="password" id="loginPassword" style="width:150px;"><br><br><input type="submit" value="Login"></form><br><a href="#" onclick="handleGuestLogin()"><b>Play as Guest</b></a><br><a href="#" onclick="showAuthArea('signup')"><b>Sign Up! It's Free!</b></a>`; } }
+    function showLoggedInState(user) { document.getElementById('authArea').style.display = 'none'; if (user && !user.username.startsWith('Guest')) { document.getElementById('sculptTestMessagesLink').style.display = 'inline'; } const u = document.getElementById('userInfoArea'); u.style.display = 'block'; let h = `<font face="Verdana, Arial, sans-serif" size="2">Hello, <b>${user.username}</b>!</font><br><br><img src="https://placehold.co/120x120/CCCCCC/000000?text=Avatar" alt="Your Avatar"><br><br>`; if (user.currencies) { h += `<table border="0" cellpadding="2" cellspacing="2" align="center" width="90%"><tr><td align="left">Diamonds:</td><td align="right">${user.currencies.diamonds}</td></tr><tr><td align="left">Sculptcoins:</td><td align="right">${user.currencies.sculptcoins}</td></tr><tr><td align="left">Points:</td><td align="right">${user.currencies.points}</td></tr></table>`; } h += `<a href="#" onclick="handleLogout()">Logout</a>`; if (!user.username.startsWith('Guest')) { h += `<hr width="90%"><font size="2"><b>Account Settings</b></font><br><form onsubmit="handleChangePassword(event)"><font size="1"><b>Change Password</b></font><br><input type="password" placeholder="Old" id="oldPassword" style="width:150px; margin-top:4px;"><br><input type="password" placeholder="New" id="newPassword" style="width:150px; margin-top:4px;"><br><input type="password" placeholder="Confirm" id="confirmNewPassword" style="width:150px; margin-top:4px;"><br><input type="submit" value="Update Password" style="margin-top:4px;"></form><br><form onsubmit="handleChangeUsername(event)"><font size="1"><b>Change Username (10 Diamonds)</b></font><br><input type="text" placeholder="New Username" id="newUsername" style="width:150px; margin-top:4px;"><br><input type="password" placeholder="Password" id="currentPasswordForUName" style="width:150px; margin-top:4px;"><br><input type="submit" value="Update Username" style="margin-top:4px;"></form>`; } if (user.username === 'Admin') { h += renderAdminBannerControls(); } u.innerHTML = h; }
+    async function handleSignup(e) { e.preventDefault(); const u = document.getElementById('signupUsername').value, p = document.getElementById('signupPassword').value; try { const r = await fetch('/signup',{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username:u,password:p})}), j = await r.json(); alert(j.message); if (r.ok) showAuthArea('login'); } catch (err) { alert('Signup failed: ' + err.message); } }
+    async function handleLogin(e) { if(e) e.preventDefault(); const u = document.getElementById('loginUsername').value, p = document.getElementById('loginPassword').value; try { const r = await fetch("/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username:u,password:p})}), j = await r.json(); if(!r.ok)throw new Error(j.message); currentUser={username:j.username,currencies:j.currencies}; localStorage.setItem('playsculpt_user', JSON.stringify(currentUser)); showLoggedInState(currentUser); } catch(err){ alert("Login failed: "+err.message); } }
+    async function handleGuestLogin() { try { const r = await fetch("/guestlogin"), j = await r.json(); if(!r.ok) throw new Error(j.message); currentUser={username:j.username}; localStorage.setItem('playsculpt_user', JSON.stringify(currentUser)); showLoggedInState(currentUser); } catch(c) { alert("Guest login failed: "+c.message); } }
+    function handleLogout() { currentUser=null; localStorage.removeItem('playsculpt_user'); document.getElementById("userInfoArea").style.display="none"; document.getElementById('sculptTestMessagesLink').style.display = 'none'; document.getElementById("authArea").style.display="block"; showAuthArea("login"); navigateTo("home"); }
+    async function handleChangePassword(e) { e.preventDefault(); const o=document.getElementById("oldPassword").value, n=document.getElementById("newPassword").value, c=document.getElementById("confirmNewPassword").value; if(n!==c){alert("New passwords do not match.");return} try{ const r=await fetch("/changepassword",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username:currentUser.username,oldPassword:o,newPassword:n})}), j=await r.json(); alert(j.message); if(r.ok)e.target.reset() }catch(err){alert("Error: "+err.message)} }
+    async function handleChangeUsername(e) { e.preventDefault(); const n=document.getElementById("newUsername").value, p=document.getElementById("currentPasswordForUName").value; if(!confirm(`Change username to "${n}"? This costs 10 Diamonds.`))return; try{ const r=await fetch("/changeusername",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({currentUsername:currentUser.username,newUsername:n,password:p})}), j=await r.json(); alert(j.message); if(r.ok){ currentUser.username = j.updatedUser.username; currentUser.currencies = j.updatedUser.currencies; localStorage.setItem('playsculpt_user', JSON.stringify(currentUser)); showLoggedInState(currentUser) } }catch(err){alert("Error: "+err.message)} }
+    async function fetchAndRenderSpotlight() { try { const r = await fetch('/spotlight'), j = await r.json(), d = document.getElementById('forumSpotlight'), c = document.getElementById('spotlightContent'); if (j.success && j.post) { const p = j.post; let h = `<font size="2"><b>Title:</b> ${p.title}<br><b>By:</b> ${p.author}<br><br><i>${p.content.substring(0, 200)}...</i><br><br>`; if(currentUser && !currentUser.username.startsWith('Guest')) { h += `<input type="button" value="Go to Post" onclick="navigateTo('forum_post', '${p.id}')"> `; } if(currentUser && currentUser.username === 'Admin') { h += `<input type="button" value="Remove Spotlight" onclick="handleDeleteSpotlight()">`; } h += `</font>`; c.innerHTML = h; d.style.display = 'block'; } else { d.style.display = 'none'; } } catch (e) { console.error('Could not fetch spotlight:', e); document.getElementById('forumSpotlight').style.display = 'none'; } }
+
+    // --- 3D Editor Functions ---
+    function initEditor() {
+        const createView = document.getElementById('createView');
+        // REMOVED Run/Stop buttons from toolbar
+        createView.innerHTML = `<div id="editorToolbar" style="padding: 5px; background: #f0f0f0; border-bottom: 1px solid #ccc;"><input type="button" value="Add Cube" onclick="addPrimitive('cube')"> <input type="button" value="Add Sphere" onclick="addPrimitive('sphere')"> | <input type="button" value="Move (W)" onclick="setTransformMode('translate')"> <input type="button" value="Rotate (E)" onclick="setTransformMode('rotate')"> <input type="button" value="Scale (R)" onclick="setTransformMode('scale')"> | <input type="button" value="Save" onclick="saveScene()"> <label for="loadSceneInput">Load:</label> <input type="file" id="loadSceneInput" onchange="loadScene(event)" accept=".json"></div><div id="editorContainer" style="position: absolute; top: 35px; left: 180px; right: 200px; bottom: 0;"></div><div style="position: absolute; top: 35px; left: 0; width: 175px; bottom: 0; border-right: 1px solid #ccc; overflow-y: auto; padding: 5px;"><b>Scene</b><hr><ul id="sceneList" style="list-style-type: none; padding-left: 5px; margin: 0;"></ul></div><div style="position: absolute; top: 35px; right: 0; width: 195px; bottom: 0; border-left: 1px solid #ccc; padding: 5px;"><b>Properties</b><hr><div id="propsContent">No object selected.</div></div>`;
+        const container = document.getElementById('editorContainer');
+        
+        raycaster = new THREE.Raycaster();
+        editorScene = new THREE.Scene();
+        editorScene.background = new THREE.Color(0xcccccc);
+        editorCamera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 1000);
+        editorCamera.position.set(10, 10, 10);
+        editorRenderer = new THREE.WebGLRenderer({ antialias: true });
+        editorRenderer.setSize(container.clientWidth, container.clientHeight);
+        container.appendChild(editorRenderer.domElement);
+        orbitControls = new THREE.OrbitControls(editorCamera, editorRenderer.domElement);
+        transformControls = new THREE.TransformControls(editorCamera, editorRenderer.domElement);
+        transformControls.addEventListener('dragging-changed', event => { orbitControls.enabled = !event.value; });
+        transformControls.addEventListener('objectChange', () => { if (selectedObject) updatePropertiesPanel(); });
+        editorScene.add(transformControls);
+        editorScene.add(new THREE.AmbientLight(0xffffff, 0.5));
+        const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        dirLight.position.set(10, 15, 5);
+        editorScene.add(dirLight);
+        
+        const baseplateGeometry = new THREE.PlaneGeometry(50, 50);
+        const baseplateMaterial = new THREE.MeshStandardMaterial({ color: 0x228B22, side: THREE.DoubleSide });
+        const baseplateMesh = new THREE.Mesh(baseplateGeometry, baseplateMaterial);
+        baseplateMesh.rotation.x = -Math.PI / 2;
+        baseplateMesh.name = "Baseplate";
+        editorScene.add(baseplateMesh);
+
+        window.addEventListener('resize', onEditorWindowResize);
+        container.addEventListener('mousedown', onEditorClick);
+        window.addEventListener('keydown', onEditorKeyDown);
+        editorInitialized = true;
+        animateEditor();
+        updateSceneGraph();
+    }
+
+    function animateEditor() { 
+        if (!editorInitialized || document.getElementById('createView').style.display === 'none') return; 
+        requestAnimationFrame(animateEditor); 
+        orbitControls.update(); 
+        editorRenderer.render(editorScene, editorCamera); 
+    }
+    
+    function onEditorWindowResize() { const c = document.getElementById('editorContainer'); if (!c) return; editorCamera.aspect = c.clientWidth / c.clientHeight; editorCamera.updateProjectionMatrix(); editorRenderer.setSize(c.clientWidth, c.clientHeight); }
+    function onEditorClick(event) { if(transformControls.dragging) return; const bounds = document.getElementById('editorContainer').getBoundingClientRect(); const mouse = new THREE.Vector2(); mouse.x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1; mouse.y = -((event.clientY - bounds.top) / bounds.height) * 2 + 1; raycaster.setFromCamera(mouse, editorCamera); const intersects = raycaster.intersectObjects(editorObjects); if (intersects.length > 0) { selectObject(intersects[0].object); } else { selectObject(null); } }
+    function onEditorKeyDown(event) { switch (event.key.toLowerCase()) { case 'w': setTransformMode('translate'); break; case 'e': setTransformMode('rotate'); break; case 'r': setTransformMode('scale'); break; case 'delete': deleteSelectedObject(); break; } }
+    
+    function addPrimitive(type) { 
+        let geometry, material, mesh;
+        material = new THREE.MeshStandardMaterial({ color: Math.random() * 0xffffff });
+        
+        switch (type) { 
+            case 'cube': 
+                geometry = new THREE.BoxGeometry(2, 2, 2); 
+                break; 
+            case 'sphere': 
+                geometry = new THREE.SphereGeometry(1, 32, 16);
+                break;
+        } 
+        
+        mesh = new THREE.Mesh(geometry, material); 
+        mesh.name = `${type}_${editorObjects.length + 1}`;
+        mesh.position.set((Math.random() - 0.5) * 10, 1, (Math.random() - 0.5) * 10);
+        
+        editorScene.add(mesh); 
+        editorObjects.push(mesh);
+
+        selectObject(mesh); 
+        updateSceneGraph(); 
+    }
+
+    function updateSceneGraph() { const l = document.getElementById('sceneList'); if (!l) return; l.innerHTML = ''; editorObjects.forEach((o) => { const item = document.createElement('li'); item.innerText = o.name; item.style.cursor = 'pointer'; item.style.backgroundColor = (o === selectedObject) ? '#ddd' : 'transparent'; item.onclick = () => selectObject(o); l.appendChild(item); }); }
+    function selectObject(object) { if (selectedObject) { selectedObject.material.emissive.setHex(0x000000); } selectedObject = object; if (selectedObject) { transformControls.attach(selectedObject); selectedObject.material.emissive.setHex(0x333333); } else { transformControls.detach(); } updateSceneGraph(); updatePropertiesPanel(); }
+    
+    function updatePropertiesPanel() { 
+        const d = document.getElementById('propsContent'); 
+        if (!selectedObject) { d.innerHTML = 'No object selected.'; return; } 
+        const { position: p, rotation: r, scale: s } = selectedObject; 
+        d.innerHTML = `<b>Name:</b> ${selectedObject.name}<hr><b>Position:</b><br>X: <input type="number" step="0.1" value="${p.x.toFixed(2)}" onchange="updateObjectProp('position', 'x', this.value)"><br>Y: <input type="number" step="0.1" value="${p.y.toFixed(2)}" onchange="updateObjectProp('position', 'y', this.value)"><br>Z: <input type="number" step="0.1" value="${p.z.toFixed(2)}" onchange="updateObjectProp('position', 'z', this.value)"><br><hr><b>Rotation:</b><br>X: <input type="number" step="0.1" value="${(r.x * 180 / Math.PI).toFixed(1)}" onchange="updateObjectProp('rotation', 'x', this.value, true)"><br>Y: <input type="number" step="0.1" value="${(r.y * 180 / Math.PI).toFixed(1)}" onchange="updateObjectProp('rotation', 'y', this.value, true)"><br>Z: <input type="number" step="0.1" value="${(r.z * 180 / Math.PI).toFixed(1)}" onchange="updateObjectProp('rotation', 'z', this.value, true)"><br><hr><b>Scale:</b><br>X: <input type="number" step="0.1" value="${s.x.toFixed(2)}" onchange="updateObjectProp('scale', 'x', this.value)"><br>Y: <input type="number" step="0.1" value="${s.y.toFixed(2)}" onchange="updateObjectProp('scale', 'y', this.value)"><br>Z: <input type="number" step="0.1" value="${s.z.toFixed(2)}" onchange="updateObjectProp('scale', 'z', this.value)"><br><hr><b>Color:</b><br><input type="color" value="#${selectedObject.material.color.getHexString()}" onchange="updateObjectColor(this.value)"><br><hr><input type="button" value="Delete Object" onclick="deleteSelectedObject()">`;
+    }
+
+    function updateObjectProp(prop, axis, val, isDeg) { if (!selectedObject) return; let n = parseFloat(val); if (isDeg) n *= Math.PI / 180; selectedObject[prop][axis] = n; }
+    
+    function updateObjectColor(hexColor) {
+        if (!selectedObject) return;
+        selectedObject.material.color.set(hexColor);
+    }
+
+    function deleteSelectedObject() { if (!selectedObject || !confirm(`Delete ${selectedObject.name}?`)) return; const index = editorObjects.indexOf(selectedObject); if (index > -1) { editorScene.remove(selectedObject); editorObjects.splice(index, 1); selectObject(null); updateSceneGraph(); } }
+    function setTransformMode(mode) { transformControls.setMode(mode); }
+    function saveScene() { const sceneData = { objects: [] }; editorObjects.forEach(obj => { sceneData.objects.push({ name: obj.name, type: obj.geometry.type.replace('Geometry', '').toLowerCase(), position: obj.position, rotation: {x: obj.rotation.x, y: obj.rotation.y, z: obj.rotation.z}, scale: obj.scale, color: '#' + obj.material.color.getHexString() }); }); const a = document.createElement('a'); const file = new Blob([JSON.stringify(sceneData)], {type: 'application/json'}); a.href = URL.createObjectURL(file); a.download = 'scene.json'; a.click(); }
+    function loadScene(event) { const f = event.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = function(e) { const c = e.target.result; const sceneData = JSON.parse(c); while(editorObjects.length > 0) { selectObject(editorObjects[0]); deleteSelectedObject();} sceneData.objects.forEach(objData => { addPrimitive(objData.type); const newObj = editorObjects[editorObjects.length - 1]; newObj.position.set(objData.position.x, objData.position.y, objData.position.z); newObj.rotation.set(objData.rotation.x, objData.rotation.y, objData.rotation.z); newObj.scale.set(objData.scale.x, objData.scale.y, objData.scale.z); if(objData.color) newObj.material.color.set(objData.color); }); selectObject(null); }; r.readAsText(f); }
+
+    // --- Page Initialization ---
+    function initialize() {
+        const storedUser = localStorage.getItem('playsculpt_user');
+        if (storedUser) {
+            try {
+                currentUser = JSON.parse(storedUser);
+                showLoggedInState(currentUser);
+            } catch(e) {
+                currentUser = null;
+                localStorage.removeItem('playsculpt_user');
+                showAuthArea('login');
+            }
+        } else {
+            showAuthArea('login');
+        }
+        fetchAndRenderSpotlight();
+        fetchAndRenderBanner();
+    }
+    
+    // Start the application directly
+    initialize();
+  </script>
+
+</body>
+</html>

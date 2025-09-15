@@ -1,0 +1,300 @@
+{
+  "categories": [
+    {
+      "id": 1,
+      "name": "Help and Feedback"
+    },
+    {
+      "id": 2,
+      "name": "Game Development Feedback"
+    },
+    {
+      "id": 3,
+      "name": "Off Topic"
+    },
+    {
+      "id": 4,
+      "name": "Updates"
+    },
+    {
+      "id": 5,
+      "name": "Bug Reports"
+    },
+    {
+      "id": 6,
+      "name": "Feature Requests"
+    },
+    {
+      "id": 7,
+      "name": "Tutorials"
+    },
+    {
+      "id": 8,
+      "name": "Count to 16,044",
+      "special": "counting_game"
+    },
+    {
+      "id": 9,
+      "name": "Introduce Yourself",
+      "label": "Do not share any personal details about yourself. Keep it safe with your hobbies, game dev experience, how you found Playsculpt.",
+      "special": "no_replies_likeable"
+    },
+    {
+      "id": 10,
+      "name": "Playsculpt Wishlists",
+      "label": "Share your wishlist for your dream items on Playsculpt, or even goals!"
+    },
+    {
+      "id": 11,
+      "name": "Game Showcase",
+      "label": "Visually share your game that you've been sculpting!",
+      "special": "image_upload"
+    },
+    {
+      "id": 12,
+      "name": "Would You Rather...?",
+      "label": "Community-made would you rather polls!"
+    },
+    {
+      "id": 13,
+      "name": "Test My Game",
+      "label": "Ask/recruit players to test your game! You can even offer payment in Points or SculptCoins, with a safe to use system accessible through this category!",
+      "special": "testhub_link"
+    }
+  ],
+  "posts": [
+    {
+      "id": "post_1757745614014",
+      "categoryId": 12,
+      "title": "hi",
+      "content": "hi",
+      "author": "r",
+      "timestamp": "2025-09-13T06:40:14.014Z",
+      "replies": [
+        {
+          "id": "reply_1757745642902",
+          "author": "r",
+          "content": "hi",
+          "timestamp": "2025-09-13T06:40:42.902Z"
+        },
+        {
+          "id": "reply_1757745950863",
+          "author": "Admin",
+          "content": "a",
+          "timestamp": "2025-09-13T06:45:50.863Z"
+        },
+        {
+          "id": "reply_1757745966861",
+          "author": "Admin",
+          "content": "wdas",
+          "timestamp": "2025-09-13T06:46:06.861Z"
+        },
+        {
+          "id": "reply_1757746008941",
+          "author": "u",
+          "content": "hi",
+          "timestamp": "2025-09-13T06:46:48.941Z"
+        },
+        {
+          "id": "reply_1757791358369",
+          "author": "888",
+          "content": "a",
+          "timestamp": "2025-09-13T19:22:38.369Z"
+        }
+      ]
+    },
+    {
+      "id": "post_1757746094822",
+      "categoryId": 2,
+      "title": "u",
+      "content": "uu",
+      "author": "u",
+      "timestamp": "2025-09-13T06:48:14.822Z",
+      "replies": [
+        {
+          "id": "reply_1757781336063",
+          "author": "u",
+          "content": "hi",
+          "timestamp": "2025-09-13T16:35:36.063Z"
+        }
+      ]
+    },
+    {
+      "id": "post_1757783091586",
+      "categoryId": 2,
+      "title": "Testing spotlight",
+      "content": "tesssssssssssssssssssssssssssst",
+      "author": "5",
+      "timestamp": "2025-09-13T17:04:51.586Z",
+      "replies": []
+    },
+    {
+      "id": "post_1757783483537",
+      "categoryId": 3,
+      "title": "3rq",
+      "content": "4",
+      "author": "y",
+      "timestamp": "2025-09-13T17:11:23.537Z",
+      "replies": []
+    },
+    {
+      "id": "post_1757785622506",
+      "categoryId": 7,
+      "title": "1",
+      "content": "1",
+      "author": "9",
+      "timestamp": "2025-09-13T17:47:02.506Z",
+      "replies": [],
+      "likes": [],
+      "imageUrl": null
+    },
+    {
+      "id": "post_1757785638231",
+      "categoryId": 10,
+      "title": "3",
+      "content": "3",
+      "author": "9",
+      "timestamp": "2025-09-13T17:47:18.231Z",
+      "replies": [],
+      "likes": [],
+      "imageUrl": null
+    },
+    {
+      "id": "post_1757785949772",
+      "categoryId": 11,
+      "title": "tr",
+      "content": "1",
+      "author": "9",
+      "timestamp": "2025-09-13T17:52:29.772Z",
+      "replies": [
+        {
+          "id": "reply_1757785971260",
+          "author": "9",
+          "content": "hjii",
+          "timestamp": "2025-09-13T17:52:51.260Z"
+        },
+        {
+          "id": "reply_1757791824360",
+          "author": "888",
+          "content": "hi!1",
+          "timestamp": "2025-09-13T19:30:24.360Z"
+        },
+        {
+          "id": "reply_1757905114273",
+          "author": "Admin",
+          "content": "a",
+          "timestamp": "2025-09-15T02:58:34.273Z"
+        }
+      ],
+      "likes": [],
+      "imageUrl": "/uploads/1757785949765.png"
+    },
+    {
+      "id": "post_1757791572492",
+      "categoryId": 8,
+      "title": "Count here",
+      "content": "COUNT!!!!!!!!!!!1",
+      "author": "Admin",
+      "timestamp": "2025-09-13T19:26:12.492Z",
+      "replies": [
+        {
+          "id": "reply_1757791585985",
+          "author": "Admin",
+          "content": "1",
+          "timestamp": "2025-09-13T19:26:25.985Z"
+        },
+        {
+          "id": "reply_1757791590956",
+          "author": "Admin",
+          "content": "2",
+          "timestamp": "2025-09-13T19:26:30.956Z"
+        },
+        {
+          "id": "reply_1757791597836",
+          "author": "Admin",
+          "content": "3",
+          "timestamp": "2025-09-13T19:26:37.836Z"
+        },
+        {
+          "id": "reply_1757791736890",
+          "author": "888",
+          "content": "4",
+          "timestamp": "2025-09-13T19:28:56.890Z"
+        },
+        {
+          "id": "reply_1757824294489",
+          "author": "0",
+          "content": "5",
+          "timestamp": "2025-09-14T04:31:34.489Z"
+        },
+        {
+          "id": "reply_1757905318285",
+          "author": "0",
+          "content": "6",
+          "timestamp": "2025-09-15T03:01:58.285Z"
+        }
+      ],
+      "likes": [],
+      "imageUrl": null
+    },
+    {
+      "id": "post_1757818203329",
+      "categoryId": 5,
+      "title": "wg",
+      "content": "wg",
+      "author": "0",
+      "timestamp": "2025-09-14T02:50:03.329Z",
+      "replies": [],
+      "likes": [],
+      "imageUrl": null
+    },
+    {
+      "id": "post_1757824377834",
+      "categoryId": 13,
+      "title": "i",
+      "content": "hi",
+      "author": "0",
+      "timestamp": "2025-09-14T04:32:57.834Z",
+      "replies": [],
+      "likes": [],
+      "imageUrl": null
+    },
+    {
+      "id": "post_1757825857862",
+      "categoryId": 1,
+      "title": "qe",
+      "content": "qe",
+      "author": "Admin",
+      "timestamp": "2025-09-14T04:57:37.862Z",
+      "replies": [
+        {
+          "id": "reply_1757904461548",
+          "author": "0",
+          "content": "a",
+          "timestamp": "2025-09-15T02:47:41.548Z"
+        }
+      ],
+      "likes": [],
+      "imageUrl": null
+    },
+    {
+      "id": "post_1757866422989",
+      "categoryId": 5,
+      "title": "r",
+      "content": "r",
+      "author": "0",
+      "timestamp": "2025-09-14T16:13:42.989Z",
+      "replies": [
+        {
+          "id": "reply_1757866427423",
+          "author": "0",
+          "content": "h",
+          "timestamp": "2025-09-14T16:13:47.423Z"
+        }
+      ],
+      "likes": [],
+      "imageUrl": null
+    }
+  ],
+  "spotlightPostId": null
+}

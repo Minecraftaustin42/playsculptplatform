@@ -1,0 +1,154 @@
+[
+  {
+    "username": "2",
+    "password": "$2b$10$pOyibVarZbtrTsr4jNJItuJ1/P8I/3gjxdygQBqdi2V.SsxQUJfmq",
+    "currencies": {
+      "diamonds": 10,
+      "sculptcoins": 0,
+      "points": 0
+    },
+    "badges": [],
+    "postCount": 0,
+    "replyCount": 0
+  },
+  {
+    "username": "r",
+    "password": "$2b$10$CtSSrenfAPdAzws0lOJ5HupYzREmuIX76RVSS0RxdsfLe2SNRW/g.",
+    "currencies": {
+      "diamonds": 10,
+      "sculptcoins": 5000,
+      "points": 26244
+    },
+    "badges": [
+      "1st Forum Post",
+      "Forum Hall of Fame",
+      "Forum Spotlight Badge"
+    ],
+    "postCount": 2,
+    "replyCount": 2
+  },
+  {
+    "username": "t",
+    "password": "$2b$10$M1AclrYcOMwjKJkaj8Sbh.2CGemwtqTZE/opQ59Fc.UaozG2il6uu",
+    "currencies": {
+      "diamonds": 10,
+      "sculptcoins": 0,
+      "points": 50
+    },
+    "badges": [],
+    "postCount": 0,
+    "replyCount": 0
+  },
+  {
+    "username": "Admin",
+    "password": "$2b$10$xiB.3y2PfU6tDLt6.q0tv.9NPBVbierp/j3FV.7OLFES2kEX0zUS6",
+    "currencies": {
+      "diamonds": 10,
+      "sculptcoins": 0,
+      "points": 200
+    },
+    "badges": [
+      "1st Forum Post"
+    ],
+    "postCount": 2,
+    "replyCount": 7
+  },
+  {
+    "username": "u",
+    "password": "$2b$10$0V5EWud2L7GqlvYET/yHGexJKO3DOLzIrwYcg7zaTe58VF13Os9Vm",
+    "currencies": {
+      "diamonds": 10,
+      "sculptcoins": 5000,
+      "points": 18244
+    },
+    "badges": [
+      "1st Forum Post",
+      "Forum Hall of Fame"
+    ],
+    "postCount": 1,
+    "replyCount": 2
+  },
+  {
+    "username": "5",
+    "password": "$2b$10$ctTHsLCS9y9fLg4Dc.P/nuoUiIWgqgMcIBH7I5SmjHucI.LJ0Hh9q",
+    "currencies": {
+      "diamonds": 10,
+      "sculptcoins": 0,
+      "points": 16200
+    },
+    "badges": [
+      "1st Forum Post",
+      "Forum Spotlight Badge"
+    ],
+    "postCount": 1,
+    "replyCount": 0
+  },
+  {
+    "username": "y",
+    "password": "$2b$10$KwPuUpyAYgwvpDrBjh2ElODuAmRePv44REsMIMeMNWUI6x1iMAoB6",
+    "currencies": {
+      "diamonds": 10,
+      "sculptcoins": 0,
+      "points": 8200
+    },
+    "badges": [
+      "1st Forum Post",
+      "Forum Spotlight Badge"
+    ],
+    "postCount": 1,
+    "replyCount": 0
+  },
+  {
+    "username": "9",
+    "password": "$2b$10$2P7RICwyEmEjFeMWKLQW8eauJu.9NLx2oa0KCBv0OE9cQiK9xJZ/e",
+    "currencies": {
+      "diamonds": 10,
+      "sculptcoins": 0,
+      "points": 24200
+    },
+    "badges": [
+      "1st Forum Post",
+      "Forum Spotlight Badge"
+    ],
+    "postCount": 4,
+    "replyCount": 1
+  },
+  {
+    "username": "888",
+    "password": "$2b$10$1aaFR5X41DjKtUUQ6Iy1.ujUA1I/LQDm/ciXRoZETtWKWhcYjT2.y",
+    "currencies": {
+      "diamonds": 0,
+      "sculptcoins": 0,
+      "points": 0
+    },
+    "badges": [],
+    "postCount": 0,
+    "replyCount": 3
+  },
+  {
+    "username": "h",
+    "password": "$2b$10$eUEzDaWNtms63waFKnnysOCUCADPg8DXpFU9VaMH6lpfN.el8T7Ru",
+    "currencies": {
+      "diamonds": 10,
+      "sculptcoins": 0,
+      "points": 0
+    },
+    "badges": [],
+    "postCount": 0,
+    "replyCount": 0
+  },
+  {
+    "username": "0",
+    "password": "$2b$10$bNw2KBsPuJ2CeDAzxjDT5.oo9T5HgA3iz6aSa1T6FN4yWmfmb9Rbm",
+    "currencies": {
+      "diamonds": 10,
+      "sculptcoins": 0,
+      "points": 148
+    },
+    "badges": [
+      "1st Forum Post"
+    ],
+    "postCount": 4,
+    "replyCount": 5
+  }
+]
