@@ -1,5 +1,7 @@
 // --- Import necessary libraries ---
 const express = require('express');
+const http = require('http');
+const { Server } = require("socket.io");
 const bcrypt = require('bcrypt');
 const fs = require('fs').promises;
 const fsSync = require('fs');
@@ -8,6 +10,9 @@ const multer = require('multer');
 
 // --- Server Setup ---
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
+
 const PORT = 3000;
 const USERS_FILE = path.join(__dirname, 'users.json');
 const GUEST_DATA_FILE = path.join(__dirname, 'guestdata.json');
@@ -15,6 +20,8 @@ const FORUMS_FILE = path.join(__dirname, 'forums.json');
 const TESTHUB_FILE = path.join(__dirname, 'testhub.json');
 const ADMIN_MESSAGE_FILE = path.join(__dirname, 'adminmessage.json');
 const BAD_WORDS_FILE = path.join(__dirname, 'words.txt');
+const USER_CREATIONS_FILE = path.join(__dirname, 'user-creations.json');
+
 
 // --- Advanced Censoring System ---
 let badWords = new Set();
@@ -110,7 +117,7 @@ function censor(text) {
 }
 
 // --- Middleware, File Upload, and other Helpers ---
-app.use(express.json());
+app.use(express.json({limit: '50mb'}));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.set('trust proxy', 1);
@@ -128,6 +135,9 @@ const getTestHubData = async () => (await readData(TESTHUB_FILE, { jobs: [], esc
 const saveTestHubData = (data) => writeData(TESTHUB_FILE, data);
 const getAdminMessage = async () => (await readData(ADMIN_MESSAGE_FILE, { message: "", backgroundColor: "#FFFF00", textColor: "#000000", fontSize: "14", enabled: false }));
 const saveAdminMessage = (data) => writeData(ADMIN_MESSAGE_FILE, data);
+const getUserCreations = async () => (await readData(USER_CREATIONS_FILE, {}));
+const saveUserCreations = (data) => writeData(USER_CREATIONS_FILE, data);
+
 
 async function initializeData() {
     await loadBadWords();
@@ -174,9 +184,19 @@ app.post('/changeusername', async (req, res) => {
         const user = users[userIndex];
         if (!(await bcrypt.compare(password, user.password))) return res.status(401).json({ success: false, message: 'Incorrect password.' });
         if (!user.currencies || user.currencies.diamonds < 10) return res.status(402).json({ success: false, message: 'Not enough diamonds (requires 10).' });
+        
+        // Also update username in creations
+        const creations = await getUserCreations();
+        if (creations[currentUsername]) {
+            creations[newUsername] = creations[currentUsername];
+            delete creations[currentUsername];
+            await saveUserCreations(creations);
+        }
+
         users[userIndex].username = newUsername;
         users[userIndex].currencies.diamonds -= 10;
         await saveUsers(users);
+
         res.status(200).json({ success: true, message: 'Username changed successfully!', updatedUser: users[userIndex] });
     } catch (error) { res.status(500).json({ success: false, message: 'Server error changing username.' }); }
 });
@@ -243,6 +263,42 @@ app.post('/testhub/message', async (req, res) => {
     } catch (error) { res.status(500).json({ success: false, message: "Server error sending message." }); }
 });
 
+// --- Studio Routes ---
+app.post('/studio/save', async (req, res) => {
+    try {
+        const { username, sceneData } = req.body;
+        if (!username || username.startsWith('Guest')) {
+            return res.status(403).json({ success: false, message: "Only registered users can save creations." });
+        }
+        const creations = await getUserCreations();
+        creations[username] = sceneData;
+        await saveUserCreations(creations);
+        res.json({ success: true, message: "Scene saved successfully." });
+    } catch (error) {
+        console.error("Error saving scene:", error);
+        res.status(500).json({ success: false, message: "Server error while saving scene." });
+    }
+});
+
+app.get('/studio/load', async (req, res) => {
+    try {
+        const { username } = req.query;
+        if (!username) {
+            return res.status(400).json({ success: false, message: "Username is required." });
+        }
+        const creations = await getUserCreations();
+        const userScene = creations[username];
+        if (userScene) {
+            res.json({ success: true, sceneData: userScene });
+        } else {
+            res.json({ success: false, message: "No saved scene found for this user." });
+        }
+    } catch (error) {
+        console.error("Error loading scene:", error);
+        res.status(500).json({ success: false, message: "Server error while loading scene." });
+    }
+});
+
 
 // --- All other routes are unchanged ---
 app.get('/guestlogin', async (req, res) => { try { const ip = req.ip; let guestData = await getGuestData(); if (!guestData.guests) guestData.guests = {}; if (guestData.guests[ip]) { return res.json({ success: true, username: `Guest${guestData.guests[ip]}` }); } const newGuestNumber = (guestData.lastGuestNumber || 0) + 1; guestData.lastGuestNumber = newGuestNumber; guestData.guests[ip] = newGuestNumber; await saveGuestData(guestData); res.json({ success: true, username: `Guest${newGuestNumber}` }); } catch (error) { console.error("Guest login error:", error); res.status(500).json({ success: false, message: "Server error during guest login." }); } });
@@ -267,8 +323,22 @@ app.post('/testhub/accept', async (req, res) => { try { const { adminUsername, a
 app.post('/testhub/submit-report', upload.array('attachments'), async (req, res) => { try { const { username, jobId, title, findings } = req.body; const testHubData = await getTestHubData(); const jobIndex = testHubData.jobs.findIndex(j => j.id === jobId); if (jobIndex === -1) return res.status(404).json({ message: 'Job not found.' }); const job = testHubData.jobs[jobIndex]; if (job.testerUsername !== username) return res.status(403).json({ message: "You are not the tester for this job." }); const newReport = { id: `report_${Date.now()}`, title, findings, attachments: req.files ? req.files.map(file => `/uploads/${file.filename}`) : [], timestamp: new Date().toISOString() }; job.reports.push(newReport); job.chat.push({ sender: 'System', text: `${username} submitted a new test report: "${title}"`, timestamp: new Date().toISOString() }); await saveTestHubData(testHubData); res.json({ success: true, message: "Test report submitted!" }); } catch (error) { res.status(500).json({ message: "Server error submitting report." }); } });
 app.post('/testhub/complete-job', async (req, res) => { try { const { adminUsername, jobId } = req.body; const testHubData = await getTestHubData(); const jobIndex = testHubData.jobs.findIndex(j => j.id === jobId); if (jobIndex === -1) return res.status(404).json({ message: 'Job not found.' }); const job = testHubData.jobs[jobIndex]; if (job.posterUsername !== adminUsername) return res.status(403).json({ message: "Unauthorized." }); if (job.status !== 'in_progress') return res.status(400).json({ message: "Job is not in progress." }); const escrowedPayment = testHubData.escrow[jobId]; if (!escrowedPayment) return res.status(500).json({ message: "Critical error: Escrow data not found." }); const users = await getUsers(); const testerIndex = users.findIndex(u => u.username === job.testerUsername); if (testerIndex === -1) return res.status(404).json({ message: "Tester account not found." }); const currencyKey = escrowedPayment.currency === 'SculptCoins' ? 'sculptcoins' : 'points'; users[testerIndex].currencies[currencyKey] += escrowedPayment.amount; job.status = 'completed'; delete testHubData.escrow[jobId]; await saveUsers(users); await saveTestHubData(testHubData); res.json({ success: true, message: `Payment of ${escrowedPayment.amount} ${escrowedPayment.currency} has been released to ${job.testerUsername}.` }); } catch (error) { res.status(500).json({ message: "Server error while completing job." }); } });
 
+// --- Socket.IO for Online Count ---
+let onlineUsers = 0;
+io.on('connection', (socket) => {
+    onlineUsers++;
+    io.emit('userCount', onlineUsers);
+    console.log('a user connected');
+    socket.on('disconnect', () => {
+        onlineUsers--;
+        io.emit('userCount', onlineUsers);
+        console.log('user disconnected');
+    });
+});
+
+
 // --- Start Server ---
-app.listen(PORT, async () => {
+server.listen(PORT, async () => {
     await initializeData();
     console.log(`Server is running at http://localhost:${PORT}`);
 });
