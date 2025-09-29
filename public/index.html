@@ -71,8 +71,7 @@
       height: 1px;
       background: #ccc;
     }
-    /* Make form elements more mobile-friendly */
-    input[type="text"], input[type="password"], input[type="number"], textarea, select {
+    input[type="text"], input[type="password"], input[type="number"], textarea, select, input[type="date"] {
         width: 95%;
         padding: 8px;
         margin: 4px 0;
@@ -90,13 +89,13 @@
     #createView {
         display: none;
         width: 100%;
-        height: 75vh; /* Taller by default */
+        height: 75vh;
         position: relative;
     }
     #editorContainer {
         position: absolute;
         top: 35px;
-        left: 205px; /* Wider side panels */
+        left: 205px;
         right: 225px;
         bottom: 0;
     }
@@ -111,15 +110,46 @@
     }
     #scene-panel {
         left: 0;
-        width: 200px; /* Wider */
+        width: 200px;
     }
     #properties-panel {
         right: 0;
-        width: 220px; /* Wider */
+        width: 220px;
+    }
+    
+    .modal {
+        display: none; 
+        position: fixed; 
+        z-index: 1001; 
+        left: 0;
+        top: 0;
+        width: 100%; 
+        height: 100%;
+        overflow: auto; 
+        background-color: rgb(0,0,0); 
+        background-color: rgba(0,0,0,0.4); 
+    }
+    .modal-content {
+        background-color: #fefefe;
+        margin: 5% auto; 
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%; 
+        max-width: 900px;
+    }
+    .close-button {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+    .close-button:hover, .close-button:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
     }
 
 
-    /* Responsive styles for screens smaller than 768px */
     @media (max-width: 768px) {
       .content-wrapper {
         flex-direction: column;
@@ -137,7 +167,7 @@
         margin-top: 10px;
       }
        #createView {
-          position: fixed; /* Take over the whole screen */
+          position: fixed;
           top: 0;
           left: 0;
           width: 100%;
@@ -156,7 +186,7 @@
 
       #editorContainer {
           position: fixed;
-          top: 35px; /* Below toolbar */
+          top: 35px;
           left: 0;
           right: 0;
           bottom: 0;
@@ -165,15 +195,15 @@
       }
       #scene-panel, #properties-panel {
           position: fixed;
-          top: 70px; /* Below toolbar */
-          bottom: auto; /* Not full height */
+          top: 70px;
+          bottom: auto;
           max-height: 50%;
           width: 90%;
           left: 5%;
-          z-index: 1001; /* Above the editor */
+          z-index: 1001;
           background: rgba(255,255,255,0.9);
           border-radius: 5px;
-          display: none; /* Hidden by default */
+          display: none;
       }
       #properties-panel {
           top: auto;
@@ -209,7 +239,7 @@
              </div>
           <hr>
           <h3>Playsculpt News</h3>
-          - Color Picker added to Create mode!<br>
+          - Manual Save & Lighting in Studio!<br>
           - Summer building contest begins.<br>
           - Trading system is now LIVE!
         </div>
@@ -247,6 +277,22 @@
     </div>
   </div>
 
+  <div id="chatLogModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeChatLogModal()">&times;</span>
+            <h2>SculptTest Chat Logs</h2>
+            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                <input type="text" id="logSearch" placeholder="Search phrase..." style="flex-grow: 1;">
+                <input type="text" id="logUserSearch" placeholder="Filter by username..." style="flex-grow: 1;">
+                <input type="date" id="logDateFilter">
+                <button onclick="renderChatLogs()">Search</button>
+            </div>
+            <div id="logContent" style="height: 400px; overflow-y: auto; border: 1px solid #ccc; padding: 5px; background: #f9f9f9;"></div>
+            <div id="logPagination" style="text-align: center; margin-top: 10px;"></div>
+        </div>
+    </div>
+
+
   <script type="text/javascript">
     // --- Global State ---
     let currentUser = null;
@@ -255,11 +301,14 @@
     let testHubCache = null;
     let adminBannerCache = null;
     let editorInitialized = false;
-    let editorScene, editorCamera, editorRenderer, orbitControls, transformControls, raycaster;
+    let editorScene, editorCamera, editorRenderer, orbitControls, transformControls, raycaster, ambientLight, dirLight;
     let editorObjects = []; 
     let selectedObject = null;
     let autosaveInterval = null;
     let socket = io();
+    let allChatLogs = [];
+    let currentPage = 1;
+    const logsPerPage = 100;
 
     // --- Socket.IO ---
     socket.on('userCount', (count) => {
@@ -759,15 +808,11 @@
     // --- Page Navigation & Content Switching ---
     function navigateTo(page, id = null) {
         const isMobile = window.innerWidth <= 768;
-
-        // Reset all main views
         document.getElementById('mainContent').style.display = 'none';
         document.getElementById('forumView').style.display = 'none';
         document.getElementById('sculptTestHubView').style.display = 'none';
         document.getElementById('createView').style.display = 'none';
-        document.body.style.overflow = 'auto'; // Restore scrolling
-
-        // Stop autosave if leaving create view
+        document.body.style.overflow = 'auto';
         if (autosaveInterval) {
             clearInterval(autosaveInterval);
             autosaveInterval = null;
@@ -780,7 +825,7 @@
             }
             document.getElementById('createView').style.display = 'block';
             if (isMobile) {
-                document.body.style.overflow = 'hidden'; // Prevent scrolling of page behind studio
+                document.body.style.overflow = 'hidden';
             }
             if (!editorInitialized) {
                 initEditor();
@@ -788,8 +833,8 @@
                 onEditorWindowResize();
                 animateEditor();
             }
-            loadScene(); // Load user's scene
-            autosaveInterval = setInterval(saveScene, 30000); // Autosave every 30 seconds
+            loadScene();
+            autosaveInterval = setInterval(saveScene, 30000);
 
         } else if (page === 'home' || page === 'games') {
             document.getElementById('mainContent').style.display = 'block';
@@ -812,7 +857,7 @@
     // --- Authentication & UI ---
     function launchGame(gameName) { alert("Starting " + gameName + "..."); }
     function showAuthArea(mode) { const a = document.getElementById('authArea'); if (mode === 'signup') { a.innerHTML = `<h3>Sign Up</h3><form onsubmit="handleSignup(event)">Username:<br><input type="text" id="signupUsername"><br>Password:<br><input type="password" id="signupPassword"><br><br><input type="submit" value="Sign Up"><br><br><a href="#" onclick="showAuthArea('login')">Already have an account?</a></form>`; } else { a.innerHTML = `<h3>Member Login</h3><form onsubmit="handleLogin(event)">Username:<br><input type="text" id="loginUsername"><br>Password:<br><input type="password" id="loginPassword"><br><br><input type="submit" value="Login"></form><br><a href="#" onclick="handleGuestLogin()"><b>Play as Guest</b></a><br><a href="#" onclick="showAuthArea('signup')"><b>Sign Up! It's Free!</b></a>`; } }
-    function showLoggedInState(user) { document.getElementById('authArea').style.display = 'none'; if (user && !user.username.startsWith('Guest')) { document.getElementById('sculptTestMessagesLink').style.display = 'inline'; } const u = document.getElementById('userInfoArea'); u.style.display = 'block'; let h = `Hello, <b>${user.username}</b>!<br><br><img src="https://placehold.co/120x120/CCCCCC/000000?text=Avatar" alt="Your Avatar"><br><br>`; if (user.currencies) { h += `<table border="0" cellpadding="2" cellspacing="2" align="center" width="90%"><tr><td align="left">Diamonds:</td><td align="right">${user.currencies.diamonds}</td></tr><tr><td align="left">Sculptcoins:</td><td align="right">${user.currencies.sculptcoins}</td></tr><tr><td align="left">Points:</td><td align="right">${user.currencies.points}</td></tr></table>`; } h += `<a href="#" onclick="handleLogout()">Logout</a>`; if (!user.username.startsWith('Guest')) { h += `<hr><h3>Account Settings</h3><form onsubmit="handleChangePassword(event)"><b>Change Password</b><br><input type="password" placeholder="Old" id="oldPassword"><br><input type="password" placeholder="New" id="newPassword"><br><input type="password" placeholder="Confirm" id="confirmNewPassword"><br><input type="submit" value="Update Password"></form><br><form onsubmit="handleChangeUsername(event)"><b>Change Username (10 Diamonds)</b><br><input type="text" placeholder="New Username" id="newUsername"><br><input type="password" placeholder="Password" id="currentPasswordForUName"><br><input type="submit" value="Update Username"></form>`; } if (user.username === 'Admin') { h += renderAdminBannerControls(); } u.innerHTML = h; }
+    function showLoggedInState(user) { document.getElementById('authArea').style.display = 'none'; if (user && !user.username.startsWith('Guest')) { document.getElementById('sculptTestMessagesLink').style.display = 'inline'; } const u = document.getElementById('userInfoArea'); u.style.display = 'block'; let h = `Hello, <b>${user.username}</b>!<br><br><img src="https://placehold.co/120x120/CCCCCC/000000?text=Avatar" alt="Your Avatar"><br><br>`; if (user.currencies) { h += `<table border="0" cellpadding="2" cellspacing="2" align="center" width="90%"><tr><td align="left">Diamonds:</td><td align="right">${user.currencies.diamonds}</td></tr><tr><td align="left">Sculptcoins:</td><td align="right">${user.currencies.sculptcoins}</td></tr><tr><td align="left">Points:</td><td align="right">${user.currencies.points}</td></tr></table>`; } h += `<a href="#" onclick="handleLogout()">Logout</a>`; if (!user.username.startsWith('Guest')) { h += `<hr><h3>Account Settings</h3><form onsubmit="handleChangePassword(event)"><b>Change Password</b><br><input type="password" placeholder="Old" id="oldPassword"><br><input type="password" placeholder="New" id="newPassword"><br><input type="password" placeholder="Confirm" id="confirmNewPassword"><br><input type="submit" value="Update Password"></form><br><form onsubmit="handleChangeUsername(event)"><b>Change Username (10 Diamonds)</b><br><input type="text" placeholder="New Username" id="newUsername"><br><input type="password" placeholder="Password" id="currentPasswordForUName"><br><input type="submit" value="Update Username"></form>`; } if (user.username === 'Admin') { h += renderAdminBannerControls(); } if (user.username === 'Moderator') { h += `<hr><input type="button" value="View Chat Logs" onclick="openChatLogModal()">`; } u.innerHTML = h; }
     async function handleSignup(e) { e.preventDefault(); const u = document.getElementById('signupUsername').value, p = document.getElementById('signupPassword').value; try { const r = await fetch('/signup',{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username:u,password:p})}), j = await r.json(); alert(j.message); if (r.ok) showAuthArea('login'); } catch (err) { alert('Signup failed: ' + err.message); } }
     async function handleLogin(e) { if(e) e.preventDefault(); const u = document.getElementById('loginUsername').value, p = document.getElementById('loginPassword').value; try { const r = await fetch("/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username:u,password:p})}), j = await r.json(); if(!r.ok)throw new Error(j.message); currentUser={username:j.username,currencies:j.currencies}; localStorage.setItem('playsculpt_user', JSON.stringify(currentUser)); showLoggedInState(currentUser); } catch(err){ alert("Login failed: "+err.message); } }
     async function handleGuestLogin() { try { const r = await fetch("/guestlogin"), j = await r.json(); if(!r.ok) throw new Error(j.message); currentUser={username:j.username}; localStorage.setItem('playsculpt_user', JSON.stringify(currentUser)); showLoggedInState(currentUser); } catch(c) { alert("Guest login failed: "+c.message); } }
@@ -826,6 +871,7 @@
         const isMobile = window.innerWidth <= 768;
         const createView = document.getElementById('createView');
         let toolbarHTML = `<div id="editorToolbar" style="padding: 5px; background: #f0f0f0; border-bottom: 1px solid #ccc;">
+            <input type="button" value="Save" onclick="saveScene()"> | 
             <input type="button" value="Add Cube" onclick="addPrimitive('cube')"> 
             <input type="button" value="Add Sphere" onclick="addPrimitive('sphere')"> | 
             <input type="button" value="Move (W)" onclick="setTransformMode('translate')"> 
@@ -842,7 +888,7 @@
         createView.innerHTML = `${toolbarHTML}
             <div id="editorContainer"></div>
             <div id="scene-panel"><b>Scene</b><hr><ul id="sceneList" style="list-style-type: none; padding-left: 5px; margin: 0;"></ul></div>
-            <div id="properties-panel"><b>Properties</b><hr><div id="propsContent">No object selected.</div></div>`;
+            <div id="properties-panel"><div id="propsContent"></div></div>`;
         
         const container = document.getElementById('editorContainer');
         
@@ -859,8 +905,10 @@
         transformControls.addEventListener('dragging-changed', event => { orbitControls.enabled = !event.value; });
         transformControls.addEventListener('objectChange', () => { if (selectedObject) updatePropertiesPanel(); });
         editorScene.add(transformControls);
-        editorScene.add(new THREE.AmbientLight(0xffffff, 0.5));
-        const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        
+        ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        editorScene.add(ambientLight);
+        dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
         dirLight.position.set(10, 15, 5);
         editorScene.add(dirLight);
         
@@ -877,6 +925,7 @@
         editorInitialized = true;
         animateEditor();
         updateSceneGraph();
+        updatePropertiesPanel(); // Initial call to show lighting props
     }
     
     function togglePanel(panelId) {
@@ -925,9 +974,23 @@
     
     function updatePropertiesPanel() { 
         const d = document.getElementById('propsContent'); 
-        if (!selectedObject) { d.innerHTML = 'No object selected.'; return; } 
-        const { position: p, rotation: r, scale: s } = selectedObject; 
-        d.innerHTML = `<b>Name:</b> ${selectedObject.name}<hr><b>Position:</b><br>X: <input type="number" step="0.1" value="${p.x.toFixed(2)}" onchange="updateObjectProp('position', 'x', this.value)"><br>Y: <input type="number" step="0.1" value="${p.y.toFixed(2)}" onchange="updateObjectProp('position', 'y', this.value)"><br>Z: <input type="number" step="0.1" value="${p.z.toFixed(2)}" onchange="updateObjectProp('position', 'z', this.value)"><br><hr><b>Rotation:</b><br>X: <input type="number" step="0.1" value="${(r.x * 180 / Math.PI).toFixed(1)}" onchange="updateObjectProp('rotation', 'x', this.value, true)"><br>Y: <input type="number" step="0.1" value="${(r.y * 180 / Math.PI).toFixed(1)}" onchange="updateObjectProp('rotation', 'y', this.value, true)"><br>Z: <input type="number" step="0.1" value="${(r.z * 180 / Math.PI).toFixed(1)}" onchange="updateObjectProp('rotation', 'z', this.value, true)"><br><hr><b>Scale:</b><br>X: <input type="number" step="0.1" value="${s.x.toFixed(2)}" onchange="updateObjectProp('scale', 'x', this.value)"><br>Y: <input type="number" step="0.1" value="${s.y.toFixed(2)}" onchange="updateObjectProp('scale', 'y', this.value)"><br>Z: <input type="number" step="0.1" value="${s.z.toFixed(2)}" onchange="updateObjectProp('scale', 'z', this.value)"><br><hr><b>Color:</b><br><input type="color" value="#${selectedObject.material.color.getHexString()}" onchange="updateObjectColor(this.value)"><br><hr><input type="button" value="Delete Object" onclick="deleteSelectedObject()">`;
+        if (!d) return;
+        let html = '<b>Properties</b><hr>';
+        
+        if (selectedObject) {
+            const { position: p, rotation: r, scale: s } = selectedObject; 
+            html += `<b>Name:</b> ${selectedObject.name}<hr><b>Position:</b><br>X: <input type="number" step="0.1" value="${p.x.toFixed(2)}" onchange="updateObjectProp('position', 'x', this.value)"><br>Y: <input type="number" step="0.1" value="${p.y.toFixed(2)}" onchange="updateObjectProp('position', 'y', this.value)"><br>Z: <input type="number" step="0.1" value="${p.z.toFixed(2)}" onchange="updateObjectProp('position', 'z', this.value)"><br><hr><b>Rotation:</b><br>X: <input type="number" step="0.1" value="${(r.x * 180 / Math.PI).toFixed(1)}" onchange="updateObjectProp('rotation', 'x', this.value, true)"><br>Y: <input type="number" step="0.1" value="${(r.y * 180 / Math.PI).toFixed(1)}" onchange="updateObjectProp('rotation', 'y', this.value, true)"><br>Z: <input type="number" step="0.1" value="${(r.z * 180 / Math.PI).toFixed(1)}" onchange="updateObjectProp('rotation', 'z', this.value, true)"><br><hr><b>Scale:</b><br>X: <input type="number" step="0.1" value="${s.x.toFixed(2)}" onchange="updateObjectProp('scale', 'x', this.value)"><br>Y: <input type="number" step="0.1" value="${s.y.toFixed(2)}" onchange="updateObjectProp('scale', 'y', this.value)"><br>Z: <input type="number" step="0.1" value="${s.z.toFixed(2)}" onchange="updateObjectProp('scale', 'z', this.value)"><br><hr><b>Color:</b><br><input type="color" value="#${selectedObject.material.color.getHexString()}" onchange="updateObjectColor(this.value)"><br><hr><input type="button" value="Delete Object" onclick="deleteSelectedObject()">`;
+        } else {
+            html += 'No object selected.';
+        }
+
+        // Lighting Properties
+        html += `<hr><b>Lighting</b><br>`;
+        html += `Skybox Color:<br><input type="color" value="#${editorScene.background.getHexString()}" onchange="updateLighting('skybox', this.value)"><br>`;
+        html += `Ambient: <input type="range" min="0" max="2" step="0.1" value="${ambientLight.intensity}" oninput="updateLighting('ambient', this.value)"><br>`;
+        html += `Directional: <input type="range" min="0" max="2" step="0.1" value="${dirLight.intensity}" oninput="updateLighting('directional', this.value)">`;
+
+        d.innerHTML = html;
     }
 
     function updateObjectProp(prop, axis, val, isDeg) { if (!selectedObject) return; let n = parseFloat(val); if (isDeg) n *= Math.PI / 180; selectedObject[prop][axis] = n; }
@@ -936,6 +999,17 @@
         if (!selectedObject) return;
         selectedObject.material.color.set(hexColor);
     }
+    
+    function updateLighting(type, value) {
+        if (type === 'skybox') {
+            editorScene.background.set(value);
+        } else if (type === 'ambient') {
+            ambientLight.intensity = parseFloat(value);
+        } else if (type === 'directional') {
+            dirLight.intensity = parseFloat(value);
+        }
+    }
+
 
     function deleteSelectedObject() { if (!selectedObject || !confirm(`Delete ${selectedObject.name}?`)) return; const index = editorObjects.indexOf(selectedObject); if (index > -1) { editorScene.remove(selectedObject); editorObjects.splice(index, 1); selectObject(null); updateSceneGraph(); } }
     function setTransformMode(mode) { transformControls.setMode(mode); }
@@ -945,7 +1019,15 @@
         const saveStatus = document.getElementById('saveStatus');
         if (saveStatus) saveStatus.innerText = 'Saving...';
         
-        const sceneData = { objects: [] };
+        const sceneData = { 
+            objects: [],
+            lighting: {
+                skybox: '#' + editorScene.background.getHexString(),
+                ambient: ambientLight.intensity,
+                directional: dirLight.intensity
+            }
+        };
+
         editorObjects.forEach(obj => {
             sceneData.objects.push({
                 name: obj.name,
@@ -973,43 +1055,128 @@
 
     async function loadScene() {
         if (!currentUser || currentUser.username.startsWith('Guest')) return;
-
-        // Clear existing scene objects (except baseplate)
         while(editorObjects.length > 0) {
              const obj = editorObjects[0];
              editorScene.remove(obj);
              editorObjects.splice(0, 1);
         }
         selectObject(null);
-        updateSceneGraph();
         
         try {
             const response = await fetch(`/studio/load?username=${currentUser.username}`);
             const result = await response.json();
             if (result.success && result.sceneData) {
-                result.sceneData.objects.forEach(objData => {
-                    let geometry, material, mesh;
-                    material = new THREE.MeshStandardMaterial({ color: objData.color || 0xffffff });
-                    switch (objData.type) {
-                        case 'box': geometry = new THREE.BoxGeometry(2, 2, 2); break;
-                        case 'sphere': geometry = new THREE.SphereGeometry(1, 32, 16); break;
-                        // Add other primitive types here as they are added to the editor
-                        default: return; // Skip unknown types
-                    }
-                    mesh = new THREE.Mesh(geometry, material);
-                    mesh.name = objData.name;
-                    mesh.position.set(objData.position.x, objData.position.y, objData.position.z);
-                    mesh.rotation.set(objData.rotation.x, objData.rotation.y, objData.rotation.z);
-                    mesh.scale.set(objData.scale.x, objData.scale.y, objData.scale.z);
-                    editorScene.add(mesh);
-                    editorObjects.push(mesh);
-                });
+                // Load Lighting
+                if (result.sceneData.lighting) {
+                    updateLighting('skybox', result.sceneData.lighting.skybox || '#cccccc');
+                    updateLighting('ambient', result.sceneData.lighting.ambient || 0.5);
+                    updateLighting('directional', result.sceneData.lighting.directional || 0.8);
+                }
+                
+                // Load Objects
+                if (result.sceneData.objects) {
+                    result.sceneData.objects.forEach(objData => {
+                        let geometry, material, mesh;
+                        material = new THREE.MeshStandardMaterial({ color: objData.color || 0xffffff });
+                        switch (objData.type) {
+                            case 'box': geometry = new THREE.BoxGeometry(2, 2, 2); break;
+                            case 'sphere': geometry = new THREE.SphereGeometry(1, 32, 16); break;
+                            default: return;
+                        }
+                        mesh = new THREE.Mesh(geometry, material);
+                        mesh.name = objData.name;
+                        mesh.position.set(objData.position.x, objData.position.y, objData.position.z);
+                        mesh.rotation.set(objData.rotation.x, objData.rotation.y, objData.rotation.z);
+                        mesh.scale.set(objData.scale.x, objData.scale.y, objData.scale.z);
+                        editorScene.add(mesh);
+                        editorObjects.push(mesh);
+                    });
+                }
                 updateSceneGraph();
+                updatePropertiesPanel();
             } else {
                 console.log("No saved scene found or error loading.");
             }
         } catch (error) {
             console.error('Load error:', error);
+        }
+    }
+
+    // --- Moderator Chat Log Functions ---
+    async function openChatLogModal() {
+        const modal = document.getElementById('chatLogModal');
+        modal.style.display = "block";
+        try {
+            const response = await fetch(`/moderator/chatlogs?username=${currentUser.username}`);
+            const result = await response.json();
+            if (!result.success) throw new Error(result.message);
+            allChatLogs = result.logs.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+            currentPage = 1;
+            renderChatLogs();
+        } catch (error) {
+            document.getElementById('logContent').innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+        }
+    }
+
+    function closeChatLogModal() {
+        document.getElementById('chatLogModal').style.display = "none";
+    }
+
+    function renderChatLogs() {
+        const searchTerm = document.getElementById('logSearch').value.toLowerCase();
+        const userTerm = document.getElementById('logUserSearch').value.toLowerCase();
+        const dateTerm = document.getElementById('logDateFilter').value;
+
+        let filteredLogs = allChatLogs;
+
+        if (searchTerm) {
+            filteredLogs = filteredLogs.filter(log => log.text.toLowerCase().includes(searchTerm));
+        }
+        if (userTerm) {
+            filteredLogs = filteredLogs.filter(log => log.sender.toLowerCase().includes(userTerm));
+        }
+        if (dateTerm) {
+            filteredLogs = filteredLogs.filter(log => log.timestamp.startsWith(dateTerm));
+        }
+
+        const logContentDiv = document.getElementById('logContent');
+        logContentDiv.innerHTML = '';
+
+        const startIndex = (currentPage - 1) * logsPerPage;
+        const endIndex = startIndex + logsPerPage;
+        const paginatedLogs = filteredLogs.slice(startIndex, endIndex);
+
+        if (paginatedLogs.length === 0) {
+            logContentDiv.innerHTML = 'No logs found with the current filters.';
+        } else {
+             paginatedLogs.forEach(log => {
+                const logElement = document.createElement('div');
+                logElement.style.borderBottom = '1px solid #eee';
+                logElement.style.padding = '4px 0';
+                logElement.innerHTML = `[${new Date(log.timestamp).toLocaleString()}] <b>${log.sender}</b>: ${log.text}`;
+                logContentDiv.appendChild(logElement);
+            });
+        }
+        
+        renderPagination(filteredLogs.length);
+    }
+
+    function renderPagination(totalLogs) {
+        const paginationDiv = document.getElementById('logPagination');
+        paginationDiv.innerHTML = '';
+        const totalPages = Math.ceil(totalLogs / logsPerPage);
+
+        for (let i = 1; i <= totalPages; i++) {
+            const pageButton = document.createElement('button');
+            pageButton.innerText = i;
+            if (i === currentPage) {
+                pageButton.disabled = true;
+            }
+            pageButton.onclick = () => {
+                currentPage = i;
+                renderChatLogs();
+            };
+            paginationDiv.appendChild(pageButton);
         }
     }
 
@@ -1033,7 +1200,6 @@
         fetchAndRenderBanner();
     }
     
-    // Start the application directly
     initialize();
   </script>
 

@@ -41,6 +41,106 @@
         },
         "color": "#d8ae5a"
       }
+    ],
+    "lighting": {
+      "skybox": "#cccccc",
+      "ambient": 0.5,
+      "directional": 0.8
+    }
+  },
+  "Sculptor": {
+    "objects": [
+      {
+        "name": "cube_1",
+        "type": "box",
+        "position": {
+          "x": 0.340373097227179,
+          "y": 1,
+          "z": -1.3546545555305012
+        },
+        "rotation": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "scale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        },
+        "color": "#58c09b"
+      },
+      {
+        "name": "sphere_2",
+        "type": "sphere",
+        "position": {
+          "x": 0.6390565210132437,
+          "y": 1,
+          "z": 4.281143635032985
+        },
+        "rotation": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "scale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        },
+        "color": "#5482ec"
+      },
+      {
+        "name": "sphere_3",
+        "type": "sphere",
+        "position": {
+          "x": -14.080499905724814,
+          "y": 1,
+          "z": 0.9290208558822854
+        },
+        "rotation": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "scale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        },
+        "color": "#2de6f8"
+      }
+    ],
+    "lighting": {
+      "skybox": "#a3dbe6",
+      "ambient": 0.2,
+      "directional": 1
+    }
+  },
+  "Admin": {
+    "objects": [
+      {
+        "name": "sphere_1",
+        "type": "sphere",
+        "position": {
+          "x": -1.0642413057799014,
+          "y": 1.5005287741778126,
+          "z": 1.4987362302563367
+        },
+        "rotation": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "scale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        },
+        "color": "#b3d311"
+      }
     ]
-  }
-}
+  },
+  "Moderator": {
+    "objects": [],
+    

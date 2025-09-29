@@ -148,7 +148,31 @@
     "badges": [
       "1st Forum Post"
     ],
-    "postCount": 4,
+    "postCount": 7,
     "replyCount": 36
+  },
+  {
+    "username": "Sculptor",
+    "password": "$2b$10$UDBhsrLDdYFzufZji1kAE.v93j4L/QlL/C3omEFXlH9NwCi12.tCm",
+    "currencies": {
+      "diamonds": 10,
+      "sculptcoins": 0,
+      "points": 0
+    },
+    "badges": [],
+    "postCount": 0,
+    "replyCount": 0
+  },
+  {
+    "username": "Moderator",
+    "password": "$2b$10$w5g86d3X1rWh2gPqhhntOudNDEbLh4a7w8ySUA9CwCgRxDW2Nk3iS",
+    "currencies": {
+      "diamonds": 10,
+      "sculptcoins": 0,
+      "points": 0
+    },
+    "badges": [],
+    "postCount": 0,
+    "replyCount": 0
   }
 ]

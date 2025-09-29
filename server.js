@@ -21,6 +21,7 @@ const TESTHUB_FILE = path.join(__dirname, 'testhub.json');
 const ADMIN_MESSAGE_FILE = path.join(__dirname, 'adminmessage.json');
 const BAD_WORDS_FILE = path.join(__dirname, 'words.txt');
 const USER_CREATIONS_FILE = path.join(__dirname, 'user-creations.json');
+const TESTHUB_LOGS_FILE = path.join(__dirname, 'testhubchatlogs.txt');
 
 
 // --- Advanced Censoring System ---
@@ -35,13 +36,11 @@ for (const letter in leetMap) {
     });
 }
 
-// This normalization is now only used for the bad word list itself.
 function getNormalizedString(text) {
     if (!text) return '';
     let normalized = text.toLowerCase();
     normalized = normalized.split('').map(char => reverseLeetMap[char] || char).join('');
     normalized = normalized.replace(/[^\p{L}\p{N}]/gu, '');
-    // IMPORTANT: No longer collapsing repeats here to prevent 'ass' becoming 'as'
     return normalized;
 }
 
@@ -85,7 +84,6 @@ function censor(text) {
         for (let j = i; j < charMap.length; j++) {
             currentSequence += charMap[j].norm;
             
-            // Now, normalize the sequence we've built (for repeats)
             const collapsedSequence = currentSequence.replace(/(.)\1+/gi, '$1');
 
             if (badWords.has(collapsedSequence) || badWords.has(currentSequence)) {
@@ -141,6 +139,15 @@ const saveUserCreations = (data) => writeData(USER_CREATIONS_FILE, data);
 
 async function initializeData() {
     await loadBadWords();
+    // Ensure the chat log file exists
+    try {
+        await fs.access(TESTHUB_LOGS_FILE);
+    } catch (error) {
+        if (error.code === 'ENOENT') {
+            await fs.writeFile(TESTHUB_LOGS_FILE, '');
+            console.log('Created testhubchatlogs.txt');
+        }
+    }
     console.log('All data files checked.');
 }
 
@@ -185,7 +192,6 @@ app.post('/changeusername', async (req, res) => {
         if (!(await bcrypt.compare(password, user.password))) return res.status(401).json({ success: false, message: 'Incorrect password.' });
         if (!user.currencies || user.currencies.diamonds < 10) return res.status(402).json({ success: false, message: 'Not enough diamonds (requires 10).' });
         
-        // Also update username in creations
         const creations = await getUserCreations();
         if (creations[currentUsername]) {
             creations[newUsername] = creations[currentUsername];
@@ -239,7 +245,7 @@ app.post('/forums/reply', async (req, res) => {
 
 app.post('/testhub/message', async (req, res) => {
     try {
-        const { username, text } = req.body;
+        const { username, text, jobId } = req.body;
         if (!userChatState[username]) userChatState[username] = { history: "" };
 
         const combined = userChatState[username].history + " " + text;
@@ -255,9 +261,16 @@ app.post('/testhub/message', async (req, res) => {
         }
         
         const testHubData = await getTestHubData();
-        const jobIndex = testHubData.jobs.findIndex(j => j.id === req.body.jobId);
+        const jobIndex = testHubData.jobs.findIndex(j => j.id === jobId);
         if (jobIndex === -1) return res.status(404).json({ message: 'Job not found.' });
-        testHubData.jobs[jobIndex].chat.push({ sender: username, text: censoredText, timestamp: new Date().toISOString() });
+
+        const timestamp = new Date().toISOString();
+        testHubData.jobs[jobIndex].chat.push({ sender: username, text: censoredText, timestamp: timestamp });
+        
+        // Log the message to the file
+        const logEntry = { jobId, timestamp, sender: username, text: censoredText };
+        await fs.appendFile(TESTHUB_LOGS_FILE, JSON.stringify(logEntry) + '\n');
+        
         await saveTestHubData(testHubData);
         res.json({ success: true, message: "Message sent." });
     } catch (error) { res.status(500).json({ success: false, message: "Server error sending message." }); }
@@ -296,6 +309,23 @@ app.get('/studio/load', async (req, res) => {
     } catch (error) {
         console.error("Error loading scene:", error);
         res.status(500).json({ success: false, message: "Server error while loading scene." });
+    }
+});
+
+
+// --- Moderator Route ---
+app.get('/moderator/chatlogs', async (req, res) => {
+    try {
+        // In a real app, you'd have a better session/auth system.
+        const { username } = req.query; 
+        if (username !== "Moderator") {
+            return res.status(403).json({ success: false, message: "Unauthorized." });
+        }
+        const logData = await fs.readFile(TESTHUB_LOGS_FILE, 'utf8');
+        const logs = logData.split('\n').filter(Boolean).map(JSON.parse);
+        res.json({ success: true, logs });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Server error fetching chat logs.' });
     }
 });
 

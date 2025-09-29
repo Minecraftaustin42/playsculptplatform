@@ -60,6 +60,52 @@
       "name": "Test My Game",
       "label": "Ask/recruit players to test your game! You can even offer payment in Points or SculptCoins, with a safe to use system accessible through this category!",
       "special": "testhub_link"
+    },
+    {
+      "id": 14,
+      "name": "Service Trading",
+      "label": "Trade skills (e.g. scripting for building, etc)"
+    },
+    {
+      "id": 15,
+      "name": "Interior Design Tips",
+      "label": "Furniture layouts, style guides, and cozy home ideas for Sculpt City.",
+      "special": "image_upload"
+    },
+    {
+      "id": 16,
+      "name": "Furniture Trading Hub",
+      "label": "Discuss selling, buying, and trading rare furniture and decorations, all for Sculpt City."
+    },
+    {
+      "id": 17,
+      "name": "Home Parties Advertising",
+      "label": "Advertise open houses, RP parties, or hangouts, for your estate in Sculpt City."
+    },
+    {
+      "id": 18,
+      "name": "Sculpt City Parades",
+      "label": "Community parades through Sculpt City!"
+    },
+    {
+      "id": 19,
+      "name": "Club Nights",
+      "label": "Community events like dance parties, beach nights, in Sculpt City."
+    },
+    {
+      "id": 20,
+      "name": "Sculpt City Competitions and Contests",
+      "label": "Community-made outfit contests, home decorating contests, fishing tournaments."
+    },
+    {
+      "id": 21,
+      "name": "Sculpt City Friend Finder",
+      "label": "Players looking for friends in Sculpt City!"
+    },
+    {
+      "id": 22,
+      "name": "Sculpt City",
+      "label": "The main chat forum thread for Sculpt City."
     }
   ],
   "posts": [
@@ -174,7 +220,7 @@
         {
           "id": "reply_1757981664703",
           "author": "0",
-          "content": "**    *****",
+          "content": "** *****",
           "timestamp": "2025-09-16T00:14:24.703Z"
         }
       ]
@@ -412,6 +458,39 @@
           "timestamp": "2025-09-14T16:13:47.423Z"
         }
       ],
+      "likes": [],
+      "imageUrl": null
+    },
+    {
+      "id": "post_1758068755471",
+      "categoryId": 17,
+      "title": "r",
+      "content": "r",
+      "author": "0",
+      "timestamp": "2025-09-17T00:25:55.500Z",
+      "replies": [],
+      "likes": [],
+      "imageUrl": null
+    },
+    {
+      "id": "post_1758068835523",
+      "categoryId": 15,
+      "title": "test",
+      "content": "wgtewetg",
+      "author": "0",
+      "timestamp": "2025-09-17T00:27:15.523Z",
+      "replies": [],
+      "likes": [],
+      "imageUrl": "/uploads/1758068835517.png"
+    },
+    {
+      "id": "post_1759105390666",
+      "categoryId": 1,
+      "title": "g",
+      "content": "t",
+      "author": "0",
+      "timestamp": "2025-09-29T00:23:10.666Z",
+      "replies": [],
       "likes": [],
       "imageUrl": null
     }
