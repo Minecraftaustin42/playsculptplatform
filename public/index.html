@@ -6,10 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="google-site-verification" content="JJ05bpYy54yP_9jul28FM8ew7DtpaiHhA7eLYADtEEs" />
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/TransformControls.js"></script>
 
   <style>
     body {
@@ -77,7 +74,7 @@
         margin: 4px 0;
         box-sizing: border-box;
     }
-    input[type="submit"], input[type="button"] {
+    input[type="submit"], input[type="button"], button {
         padding: 8px 12px;
         cursor: pointer;
     }
@@ -89,32 +86,39 @@
     #createView {
         display: none;
         width: 100%;
-        height: 75vh;
-        position: relative;
     }
-    #editorContainer {
-        position: absolute;
-        top: 35px;
-        left: 205px;
-        right: 225px;
-        bottom: 0;
-    }
-    #scene-panel, #properties-panel {
-        position: absolute;
-        top: 35px;
-        bottom: 0;
-        border: 1px solid #ccc;
-        overflow-y: auto;
+    #editorToolbar {
         padding: 5px;
-        background-color: #f9f9f9;
+        background: #f0f0f0;
+        border-bottom: 1px solid #ccc;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
     }
-    #scene-panel {
-        left: 0;
-        width: 200px;
+    #grid-container {
+        display: grid;
+        grid-template-columns: repeat(32, 1fr);
+        grid-template-rows: repeat(32, 1fr);
+        width: 600px;
+        height: 600px;
+        border: 1px solid #333;
+        margin-top: 10px;
+        background-color: #fdfdfd;
+        touch-action: none;
     }
-    #properties-panel {
-        right: 0;
-        width: 220px;
+    .grid-cell {
+        border: 1px solid #eee;
+        background-color: #ffffff;
+    }
+    .grid-cell:hover {
+        outline: 1px solid #007bff;
+        cursor: pointer;
+    }
+    #editorToolbar button.active {
+        background-color: #007bff;
+        color: white;
+        border-color: #007bff;
     }
     
     .modal {
@@ -166,48 +170,11 @@
       .header .nav {
         margin-top: 10px;
       }
-       #createView {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          z-index: 1000;
-          background-color: #fff;
-      }
-
-      #editorToolbar {
-          position: fixed;
-          top: 0;
-          left:0;
-          width: 100%;
-          z-index: 1002;
-      }
-
-      #editorContainer {
-          position: fixed;
-          top: 35px;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          width: 100%;
-          height: calc(100% - 35px);
-      }
-      #scene-panel, #properties-panel {
-          position: fixed;
-          top: 70px;
-          bottom: auto;
-          max-height: 50%;
-          width: 90%;
-          left: 5%;
-          z-index: 1001;
-          background: rgba(255,255,255,0.9);
-          border-radius: 5px;
-          display: none;
-      }
-      #properties-panel {
-          top: auto;
-          bottom: 10px;
+      #grid-container {
+        width: 95vw;
+        height: 95vw;
+        max-width: 600px;
+        max-height: 600px;
       }
     }
   </style>
@@ -239,7 +206,7 @@
              </div>
           <hr>
           <h3>Playsculpt News</h3>
-          - Manual Save & Lighting in Studio!<br>
+          - Manual Save in Studio!<br>
           - Summer building contest begins.<br>
           - Trading system is now LIVE!
         </div>
@@ -247,7 +214,7 @@
         <div class="main-content">
           <div id="mainContent">
             <h2>Welcome to Playsculpt!</h2>
-            <p>The ultimate 3D platform for playing, creating, and sharing experiences. What will you build today?</p>
+            <p>The ultimate 2D platform for playing, creating, and sharing experiences. What will you build today?</p>
             <div id="forumSpotlight" style="display:none; border: 1px solid #999999; padding: 10px;">
                 <h3>Forum Spotlight</h3>
                 <hr>
@@ -258,8 +225,8 @@
             <hr>
             <table width="100%" border="0" cellpadding="5" cellspacing="5">
               <tr align="center">
-                <td width="33%" valign="top"><img src="https://placehold.co/150x100/CCCCCC/000000?text=Brick+Battle" alt="Brick Battle Game"><br><b><a href="#">Brick Battle Arena</a></b><br>By: Constructor_Carl<br><input type="button" value="Play" onclick="launchGame('Brick Battle Arena')"></td>
-                <td width="33%" valign="top"><img src="https://placehold.co/150x100/DDDDDD/000000?text=Obby" alt="Escape the Obby Game"><br><b><a href="#">Escape the Treacherous Obby</a></b><br>By: SpeedySamantha<br><input type="button" value="Play" onclick="launchGame('Escape the Treacherous Obby')"></td>
+                <td width="33%" valign="top"><img src="https://placehold.co/150x100/CCCCCC/000000?text=Block+Battle" alt="Block Battle Game"><br><b><a href="#">Block Battle Arena</a></b><br>By: Constructor_Carl<br><input type="button" value="Play" onclick="launchGame('Block Battle Arena')"></td>
+                <td width="33%" valign="top"><img src="https://placehold.co/150x100/DDDDDD/000000?text=Platformer" alt="Escape the Platformer Game"><br><b><a href="#">Escape the Treacherous Platformer</a></b><br>By: SpeedySamantha<br><input type="button" value="Play" onclick="launchGame('Escape the Treacherous Platformer')"></td>
                 <td width="33%" valign="top"><img src="https://placehold.co/150x100/EEEEEE/000000?text=Tycoon" alt="Tycoon Game"><br><b><a href="#">Build Your Dream House Tycoon</a></b><br>By: TycoonKing<br><input type="button" value="Play" onclick="launchGame('Build Your Dream House Tycoon')"></td>
               </tr>
             </table>
@@ -301,14 +268,19 @@
     let testHubCache = null;
     let adminBannerCache = null;
     let editorInitialized = false;
-    let editorScene, editorCamera, editorRenderer, orbitControls, transformControls, raycaster, ambientLight, dirLight;
-    let editorObjects = []; 
-    let selectedObject = null;
     let autosaveInterval = null;
     let socket = io();
     let allChatLogs = [];
     let currentPage = 1;
     const logsPerPage = 100;
+
+    // 2D Editor State
+    let gridData = {};
+    let currentTool = 'paint';
+    let selectedColor = '#000000';
+    const gridSize = 32;
+    let isDrawing = false;
+
 
     // --- Socket.IO ---
     socket.on('userCount', (count) => {
@@ -328,6 +300,7 @@
                     bannerDiv.style.backgroundColor = adminBannerCache.backgroundColor;
                     bannerDiv.style.color = adminBannerCache.textColor;
                     bannerDiv.style.fontSize = adminBannerCache.fontSize + 'px';
+                    // The message is sanitized on the server, so it's safe to use innerHTML here.
                     bannerDiv.innerHTML = adminBannerCache.message;
                 } else {
                     bannerDiv.style.display = 'none';
@@ -358,7 +331,6 @@
     async function handleUpdateBanner(event) {
         event.preventDefault();
         const bannerData = {
-            adminUsername: currentUser.username,
             message: document.getElementById('bannerMessage').value,
             backgroundColor: document.getElementById('bannerBgColor').value,
             textColor: document.getElementById('bannerTextColor').value,
@@ -381,9 +353,9 @@
         }
     }
 
-    // --- Forum Rendering (No Changes) ---
+    // --- Forum Rendering ---
     async function showForumsView() {
-        if (!currentUser || currentUser.username.startsWith('Guest')) {
+        if (!currentUser || currentUser.role === 'guest') {
             alert('You must be logged in to a registered account to access the forums.');
             return;
         }
@@ -392,6 +364,7 @@
     async function renderForum(view = 'categories', id = null) {
         const forumViewDiv = document.getElementById('forumView');
         try {
+            // Re-fetch data each time to ensure it's fresh
             const response = await fetch('/forums');
             if (!response.ok) throw new Error('Failed to fetch forum data.');
             const data = await response.json();
@@ -456,13 +429,14 @@
         if (!post) { document.getElementById('forumView').innerHTML = 'Post not found.'; return; }
         const category = forumDataCache.categories.find(c => c.id === post.categoryId);
         let html = `<input type="button" value="&laquo; Back to Posts" onclick="renderForum('posts', ${post.categoryId})"><hr><h3>${post.title}</h3><p>By ${renderUsernameWithTooltip(post.author)} on ${new Date(post.timestamp).toLocaleString()}</p>`;
-        if (currentUser && currentUser.username === 'Admin') {
+        if (currentUser && currentUser.role === 'admin') {
             html += `<div style="border: 1px dashed red; padding: 5px; margin-bottom: 10px;"><b>Admin Controls:</b><br><input type="button" value="Award Hall of Fame" onclick="handleAwardBadge('${post.author}')"> <input type="button" value="Give Spotlight" onclick="handleAwardSpotlight('${post.id}')"> <input type="button" value="Relocate Post" onclick="showRelocateUI('${post.id}')"> <input type="button" value="Delete Post" onclick="handleDeletePost('${post.id}')"><div id="relocateUi-${post.id}" style="display:none; margin-top: 5px;"></div></div>`;
         }
         if (post.imageUrl) {
             html += `<img src="${post.imageUrl}" alt="User uploaded image" style="max-width: 400px; border: 1px solid #ccc; padding: 5px;"><br><br>`;
         }
-        html += `<p style="border:1px solid #ccc; padding:10px;">${post.content.replace(/\n/g, '<br>')}</p>`;
+        // Content is sanitized server-side, safe to render
+        html += `<p style="border:1px solid #ccc; padding:10px;">${post.content}</p>`;
         if (category.special === 'no_replies_likeable') {
             const likesCount = (post.likes || []).length;
             const hasLiked = post.likes && post.likes.includes(currentUser.username);
@@ -476,8 +450,8 @@
             html += '<hr><h4>Replies</h4>';
             if (post.replies && post.replies.length > 0) {
                 post.replies.forEach(reply => {
-                    html += `<div style="border:1px solid #ddd; padding:5px; margin-bottom:5px;"><p>${renderUsernameWithTooltip(reply.author)} says:</p><p>${reply.content.replace(/\n/g, '<br>')}</p>`;
-                    if (currentUser && currentUser.username === 'Admin') {
+                    html += `<div style="border:1px solid #ddd; padding:5px; margin-bottom:5px;"><p>${renderUsernameWithTooltip(reply.author)} says:</p><p>${reply.content}</p>`;
+                    if (currentUser && currentUser.role === 'admin') {
                         html += `<input type="button" value="Delete Reply" onclick="handleDeleteReply('${post.id}', '${reply.id}')">`;
                     }
                     html += `</div>`;
@@ -500,7 +474,7 @@
         forumDataCache.categories.forEach(cat => {
             html += `<option value="${cat.id}">${cat.name}</option>`;
         });
-        html += '</select><br><br><div id="imageUploadSection" style="display:none;">Image (Optional):<br><input type="file" id="postImage" name="image"><br><br></div>Content (max 2000 chars):<br><textarea id="postContent" name="content" rows="10" maxlength="2000" required></textarea><br><br><input type="submit" value="Submit Post"></form>';
+        html += '</select><br><br><div id="imageUploadSection" style="display:none;">Image (Optional, max 5MB):<br><input type="file" id="postImage" name="image" accept="image/png, image/jpeg, image/gif"><br><br></div>Content (max 2000 chars):<br><textarea id="postContent" name="content" rows="10" maxlength="2000" required></textarea><br><br><input type="submit" value="Submit Post"></form>';
         document.getElementById('forumView').innerHTML = html;
         toggleImageUpload(document.getElementById('postCategory').value);
     }
@@ -518,7 +492,7 @@
         event.preventDefault();
         const form = document.getElementById('createPostForm');
         const formData = new FormData(form);
-        formData.append('username', currentUser.username);
+        // Username is no longer needed in form data, it's taken from the session on the server
         try {
             const response = await fetch('/forums/post', { method: 'POST', body: formData });
             const result = await response.json();
@@ -533,7 +507,7 @@
         const content = document.getElementById('replyContent').value;
         if (!content.trim()) { alert('Reply cannot be empty.'); return; }
         try {
-            const response = await fetch('/forums/reply', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: currentUser.username, content, postId }) });
+            const response = await fetch('/forums/reply', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ content, postId }) });
             const result = await response.json();
             if (!response.ok) throw new Error(result.message);
             renderForum('post_view', postId);
@@ -543,7 +517,7 @@
     }
     async function handleLikePost(postId) {
         try {
-            const response = await fetch('/forums/like', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: currentUser.username, postId }) });
+            const response = await fetch('/forums/like', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ postId }) });
             const result = await response.json();
             if (!response.ok) throw new Error(result.message);
             alert(result.message);
@@ -555,7 +529,7 @@
     async function handleAwardBadge(targetUsername) {
         if (!confirm(`Award "Forum Hall of Fame" to ${targetUsername}?`)) return;
         try {
-            const response = await fetch('/admin/award-badge', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ adminUsername: currentUser.username, targetUsername }) });
+            const response = await fetch('/admin/award-badge', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ targetUsername }) });
             const result = await response.json();
             alert(result.message);
         } catch (error) {
@@ -565,7 +539,7 @@
     async function handleAwardSpotlight(postId) {
         if (!confirm('Make this post the Forum Spotlight?')) return;
         try {
-            const response = await fetch('/admin/award-spotlight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ adminUsername: currentUser.username, postId }) });
+            const response = await fetch('/admin/award-spotlight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ postId }) });
             const result = await response.json();
             alert(result.message);
             if(result.success) fetchAndRenderSpotlight();
@@ -576,7 +550,7 @@
     async function handleDeleteSpotlight() {
         if (!confirm('Remove the Forum Spotlight?')) return;
         try {
-            const response = await fetch('/admin/delete-spotlight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ adminUsername: currentUser.username }) });
+            const response = await fetch('/admin/delete-spotlight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
             const result = await response.json();
             alert(result.message);
             if(result.success) fetchAndRenderSpotlight();
@@ -587,7 +561,7 @@
     async function handleDeletePost(postId) {
         if (!confirm('PERMANENTLY delete this post and all its replies?')) return;
         try {
-            const response = await fetch('/admin/delete-post', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ adminUsername: currentUser.username, postId }) });
+            const response = await fetch('/admin/delete-post', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ postId }) });
             const result = await response.json();
             alert(result.message);
             if(result.success) renderForum('categories');
@@ -598,7 +572,7 @@
     async function handleDeleteReply(postId, replyId) {
         if (!confirm('PERMANENTLY delete this reply?')) return;
         try {
-            const response = await fetch('/admin/delete-reply', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ adminUsername: currentUser.username, postId, replyId }) });
+            const response = await fetch('/admin/delete-reply', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ postId, replyId }) });
             const result = await response.json();
             alert(result.message);
             if(result.success) renderForum('post_view', postId);
@@ -620,7 +594,7 @@
         const categoryName = forumDataCache.categories.find(c => c.id == newCategoryId).name;
         if (!confirm(`Move post to "${categoryName}"?`)) return;
         try {
-            const response = await fetch('/admin/relocate-post', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ adminUsername: currentUser.username, postId, newCategoryId }) });
+            const response = await fetch('/admin/relocate-post', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ postId, newCategoryId }) });
             const result = await response.json();
             alert(result.message);
             if (result.success) renderForum('categories');
@@ -629,9 +603,9 @@
         }
     }
     
-    // --- SculptTest Hub (No Changes) ---
+    // --- SculptTest Hub ---
     function renderSculptTestHub(view = 'main', id = null) {
-        if (!currentUser || currentUser.username.startsWith('Guest')) {
+        if (!currentUser || currentUser.role === 'guest') {
             alert('You must be logged in to access the SculptTest Hub.');
             navigateTo('home');
             return;
@@ -673,7 +647,7 @@
         const hubView = document.getElementById('sculptTestHubView');
         hubView.innerHTML = '<h3>Loading Messages...</h3>';
         try {
-            const response = await fetch(`/testhub/messages?username=${currentUser.username}`);
+            const response = await fetch(`/testhub/messages`);
             const result = await response.json();
             if(!result.success) throw new Error(result.message);
             testHubCache = result.jobs;
@@ -695,7 +669,7 @@
         const hubView = document.getElementById('sculptTestHubView');
         let job = testHubCache ? testHubCache.find(j => j.id === jobId) : null;
         if (!job) {
-            const response = await fetch(`/testhub/messages?username=${currentUser.username}`);
+            const response = await fetch(`/testhub/messages`);
             const result = await response.json();
             if(!result.success) { hubView.innerHTML = 'Error: Could not load job details.'; return; }
             testHubCache = result.jobs;
@@ -703,7 +677,7 @@
             if(!job) { hubView.innerHTML = 'Error: Job not found.'; return; }
         }
         const isPoster = currentUser.username === job.posterUsername, isTester = currentUser.username === job.testerUsername, isApplicant = job.applicants.some(a => a.username === currentUser.username);
-        let html = `<input type="button" value="&laquo; Back" onclick="navigateTo('sculpt_test_messages')"><hr><h3>${job.title}</h3><p><b>Desc:</b> ${job.description}</p><p><b>Link:</b> <a href="${job.gameLink}" target="_blank">${job.gameLink}</a></p><p><b>Reqs:</b> ${job.requirements||'None'}</p><p><b>Pay:</b> ${job.paymentAmount} ${job.paymentMethod}</p>`;
+        let html = `<input type="button" value="&laquo; Back" onclick="navigateTo('sculpt_test_messages')"><hr><h3>${job.title}</h3><p><b>Desc:</b> ${job.description}</p><p><b>Link:</b> <a href="${job.gameLink}" target="_blank" rel="noopener noreferrer">${job.gameLink}</a></p><p><b>Reqs:</b> ${job.requirements||'None'}</p><p><b>Pay:</b> ${job.paymentAmount} ${job.paymentMethod}</p>`;
         if (isPoster && job.reports && job.reports.length > 0) {
             html += `<hr><h4>Submitted Reports</h4>`;
             job.reports.forEach(r => {
@@ -737,7 +711,7 @@
     }
     async function handlePostJob(event) {
         event.preventDefault();
-        const jobData = { username: currentUser.username, title: document.getElementById('jobTitle').value, description: document.getElementById('jobDesc').value, gameLink: document.getElementById('jobGameLink').value, requirements: document.getElementById('jobReqs').value, amount: document.getElementById('jobAmount').value, paymentMethod: document.getElementById('jobPaymentMethod').value };
+        const jobData = { title: document.getElementById('jobTitle').value, description: document.getElementById('jobDesc').value, gameLink: document.getElementById('jobGameLink').value, requirements: document.getElementById('jobReqs').value, amount: document.getElementById('jobAmount').value, paymentMethod: document.getElementById('jobPaymentMethod').value };
         if (!confirm(`This will deduct ${jobData.amount} ${jobData.paymentMethod} and place it in escrow. Proceed?`)) return;
         try {
             const response = await fetch('/testhub/job', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(jobData) });
@@ -752,9 +726,8 @@
         } catch (error) { alert('Error: ' + error.message); }
     }
     async function handleApplyForJob(jobId) {
-        if (!currentUser) return;
         try {
-            const response = await fetch('/testhub/apply', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: currentUser.username, jobId }) });
+            const response = await fetch('/testhub/apply', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jobId }) });
             const result = await response.json();
             alert(result.message);
             if (result.success) { testHubCache = null; renderChatView(jobId); }
@@ -765,7 +738,7 @@
         const text = messageInput.value.trim();
         if (!text) return;
         try {
-            const response = await fetch('/testhub/message', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: currentUser.username, text, jobId }) });
+            const response = await fetch('/testhub/message', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, jobId }) });
             const result = await response.json();
             if (!result.success) { alert("Error: " + result.message); return; }
             messageInput.value = '';
@@ -776,7 +749,7 @@
     async function handleAcceptApplicant(jobId, applicantUsername) {
         if (!confirm(`Accept ${applicantUsername}? This closes the job to others.`)) return;
          try {
-            const response = await fetch('/testhub/accept', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ adminUsername: currentUser.username, applicantUsername, jobId }) });
+            const response = await fetch('/testhub/accept', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ applicantUsername, jobId }) });
             const result = await response.json();
             alert(result.message);
             if (result.success) { testHubCache = null; renderChatView(jobId); }
@@ -786,7 +759,6 @@
         event.preventDefault();
         const form = document.getElementById('reportForm');
         const formData = new FormData(form);
-        formData.append('username', currentUser.username);
         formData.append('jobId', jobId);
         try {
             const response = await fetch('/testhub/submit-report', { method: 'POST', body: formData });
@@ -798,7 +770,7 @@
     async function handleCompleteJob(jobId) {
         if (!confirm("Are you sure you want to release payment? This is final.")) return;
         try {
-            const response = await fetch('/testhub/complete-job', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ adminUsername: currentUser.username, jobId }) });
+            const response = await fetch('/testhub/complete-job', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jobId }) });
             const result = await response.json();
             alert(result.message);
             if (result.success) navigateTo('sculpt_test_messages');
@@ -807,35 +779,28 @@
 
     // --- Page Navigation & Content Switching ---
     function navigateTo(page, id = null) {
-        const isMobile = window.innerWidth <= 768;
         document.getElementById('mainContent').style.display = 'none';
         document.getElementById('forumView').style.display = 'none';
         document.getElementById('sculptTestHubView').style.display = 'none';
         document.getElementById('createView').style.display = 'none';
-        document.body.style.overflow = 'auto';
+        
         if (autosaveInterval) {
             clearInterval(autosaveInterval);
             autosaveInterval = null;
         }
 
         if (page === 'create') {
-            if (!currentUser || currentUser.username.startsWith('Guest')) {
+            if (!currentUser || currentUser.role === 'guest') {
                 alert('You must be logged in to a registered account to access the Create page.');
+                navigateTo('home');
                 return;
             }
             document.getElementById('createView').style.display = 'block';
-            if (isMobile) {
-                document.body.style.overflow = 'hidden';
-            }
             if (!editorInitialized) {
                 initEditor();
-            } else {
-                onEditorWindowResize();
-                animateEditor();
             }
             loadScene();
             autosaveInterval = setInterval(saveScene, 30000);
-
         } else if (page === 'home' || page === 'games') {
             document.getElementById('mainContent').style.display = 'block';
         } else if (page === 'forums') {
@@ -854,196 +819,101 @@
     }
 
 
-    // --- Authentication & UI ---
+    // --- (UPDATED) Authentication & UI ---
     function launchGame(gameName) { alert("Starting " + gameName + "..."); }
     function showAuthArea(mode) { const a = document.getElementById('authArea'); if (mode === 'signup') { a.innerHTML = `<h3>Sign Up</h3><form onsubmit="handleSignup(event)">Username:<br><input type="text" id="signupUsername"><br>Password:<br><input type="password" id="signupPassword"><br><br><input type="submit" value="Sign Up"><br><br><a href="#" onclick="showAuthArea('login')">Already have an account?</a></form>`; } else { a.innerHTML = `<h3>Member Login</h3><form onsubmit="handleLogin(event)">Username:<br><input type="text" id="loginUsername"><br>Password:<br><input type="password" id="loginPassword"><br><br><input type="submit" value="Login"></form><br><a href="#" onclick="handleGuestLogin()"><b>Play as Guest</b></a><br><a href="#" onclick="showAuthArea('signup')"><b>Sign Up! It's Free!</b></a>`; } }
-    function showLoggedInState(user) { document.getElementById('authArea').style.display = 'none'; if (user && !user.username.startsWith('Guest')) { document.getElementById('sculptTestMessagesLink').style.display = 'inline'; } const u = document.getElementById('userInfoArea'); u.style.display = 'block'; let h = `Hello, <b>${user.username}</b>!<br><br><img src="https://placehold.co/120x120/CCCCCC/000000?text=Avatar" alt="Your Avatar"><br><br>`; if (user.currencies) { h += `<table border="0" cellpadding="2" cellspacing="2" align="center" width="90%"><tr><td align="left">Diamonds:</td><td align="right">${user.currencies.diamonds}</td></tr><tr><td align="left">Sculptcoins:</td><td align="right">${user.currencies.sculptcoins}</td></tr><tr><td align="left">Points:</td><td align="right">${user.currencies.points}</td></tr></table>`; } h += `<a href="#" onclick="handleLogout()">Logout</a>`; if (!user.username.startsWith('Guest')) { h += `<hr><h3>Account Settings</h3><form onsubmit="handleChangePassword(event)"><b>Change Password</b><br><input type="password" placeholder="Old" id="oldPassword"><br><input type="password" placeholder="New" id="newPassword"><br><input type="password" placeholder="Confirm" id="confirmNewPassword"><br><input type="submit" value="Update Password"></form><br><form onsubmit="handleChangeUsername(event)"><b>Change Username (10 Diamonds)</b><br><input type="text" placeholder="New Username" id="newUsername"><br><input type="password" placeholder="Password" id="currentPasswordForUName"><br><input type="submit" value="Update Username"></form>`; } if (user.username === 'Admin') { h += renderAdminBannerControls(); } if (user.username === 'Moderator') { h += `<hr><input type="button" value="View Chat Logs" onclick="openChatLogModal()">`; } u.innerHTML = h; }
+    function showLoggedInState(user) { document.getElementById('authArea').style.display = 'none'; if (user && user.role !== 'guest') { document.getElementById('sculptTestMessagesLink').style.display = 'inline'; } else { document.getElementById('sculptTestMessagesLink').style.display = 'none'; } const u = document.getElementById('userInfoArea'); u.style.display = 'block'; let h = `Hello, <b>${user.username}</b>!<br><br><img src="https://placehold.co/120x120/CCCCCC/000000?text=Avatar" alt="Your Avatar"><br><br>`; if (user.currencies) { h += `<table border="0" cellpadding="2" cellspacing="2" align="center" width="90%"><tr><td align="left">Diamonds:</td><td align="right">${user.currencies.diamonds}</td></tr><tr><td align="left">Sculptcoins:</td><td align="right">${user.currencies.sculptcoins}</td></tr><tr><td align="left">Points:</td><td align="right">${user.currencies.points}</td></tr></table>`; } h += `<a href="#" onclick="handleLogout()">Logout</a>`; if (user.role !== 'guest') { h += `<hr><h3>Account Settings</h3><form onsubmit="handleChangePassword(event)"><b>Change Password</b><br><input type="password" placeholder="Old" id="oldPassword"><br><input type="password" placeholder="New" id="newPassword"><br><input type="password" placeholder="Confirm" id="confirmNewPassword"><br><input type="submit" value="Update Password"></form><br><form onsubmit="handleChangeUsername(event)"><b>Change Username (10 Diamonds)</b><br><input type="text" placeholder="New Username" id="newUsername"><br><input type="password" placeholder="Password" id="currentPasswordForUName"><br><input type="submit" value="Update Username"></form>`; } if (user.role === 'admin') { h += renderAdminBannerControls(); } if (user.role === 'moderator' || user.role === 'admin') { h += `<hr><input type="button" value="View Chat Logs" onclick="openChatLogModal()">`; } u.innerHTML = h; }
     async function handleSignup(e) { e.preventDefault(); const u = document.getElementById('signupUsername').value, p = document.getElementById('signupPassword').value; try { const r = await fetch('/signup',{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username:u,password:p})}), j = await r.json(); alert(j.message); if (r.ok) showAuthArea('login'); } catch (err) { alert('Signup failed: ' + err.message); } }
-    async function handleLogin(e) { if(e) e.preventDefault(); const u = document.getElementById('loginUsername').value, p = document.getElementById('loginPassword').value; try { const r = await fetch("/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username:u,password:p})}), j = await r.json(); if(!r.ok)throw new Error(j.message); currentUser={username:j.username,currencies:j.currencies}; localStorage.setItem('playsculpt_user', JSON.stringify(currentUser)); showLoggedInState(currentUser); } catch(err){ alert("Login failed: "+err.message); } }
-    async function handleGuestLogin() { try { const r = await fetch("/guestlogin"), j = await r.json(); if(!r.ok) throw new Error(j.message); currentUser={username:j.username}; localStorage.setItem('playsculpt_user', JSON.stringify(currentUser)); showLoggedInState(currentUser); } catch(c) { alert("Guest login failed: "+c.message); } }
-    function handleLogout() { currentUser=null; localStorage.removeItem('playsculpt_user'); document.getElementById("userInfoArea").style.display="none"; document.getElementById('sculptTestMessagesLink').style.display = 'none'; document.getElementById("authArea").style.display="block"; showAuthArea("login"); navigateTo("home"); }
-    async function handleChangePassword(e) { e.preventDefault(); const o=document.getElementById("oldPassword").value, n=document.getElementById("newPassword").value, c=document.getElementById("confirmNewPassword").value; if(n!==c){alert("New passwords do not match.");return} try{ const r=await fetch("/changepassword",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username:currentUser.username,oldPassword:o,newPassword:n})}), j=await r.json(); alert(j.message); if(r.ok)e.target.reset() }catch(err){alert("Error: "+err.message)} }
-    async function handleChangeUsername(e) { e.preventDefault(); const n=document.getElementById("newUsername").value, p=document.getElementById("currentPasswordForUName").value; if(!confirm(`Change username to "${n}"? This costs 10 Diamonds.`))return; try{ const r=await fetch("/changeusername",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({currentUsername:currentUser.username,newUsername:n,password:p})}), j=await r.json(); alert(j.message); if(r.ok){ currentUser.username = j.updatedUser.username; currentUser.currencies = j.updatedUser.currencies; localStorage.setItem('playsculpt_user', JSON.stringify(currentUser)); showLoggedInState(currentUser) } }catch(err){alert("Error: "+err.message)} }
-    async function fetchAndRenderSpotlight() { try { const r = await fetch('/spotlight'), j = await r.json(), d = document.getElementById('forumSpotlight'), c = document.getElementById('spotlightContent'); if (j.success && j.post) { const p = j.post; let h = `<b>Title:</b> ${p.title}<br><b>By:</b> ${p.author}<br><br><i>${p.content.substring(0, 200)}...</i><br><br>`; if(currentUser && !currentUser.username.startsWith('Guest')) { h += `<input type="button" value="Go to Post" onclick="navigateTo('forum_post', '${p.id}')"> `; } if(currentUser && currentUser.username === 'Admin') { h += `<input type="button" value="Remove Spotlight" onclick="handleDeleteSpotlight()">`; } h += ``; c.innerHTML = h; d.style.display = 'block'; } else { d.style.display = 'none'; } } catch (e) { console.error('Could not fetch spotlight:', e); document.getElementById('forumSpotlight').style.display = 'none'; } }
+    async function handleLogin(e) { if(e) e.preventDefault(); const u = document.getElementById('loginUsername').value, p = document.getElementById('loginPassword').value; try { const r = await fetch("/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username:u,password:p})}), j = await r.json(); if(!r.ok)throw new Error(j.message); currentUser = j.user; showLoggedInState(currentUser); } catch(err){ alert("Login failed: "+err.message); } }
+    async function handleGuestLogin() { try { const r = await fetch("/guestlogin"), j = await r.json(); if(!r.ok) throw new Error(j.message); currentUser = j.user; showLoggedInState(currentUser); } catch(c) { alert("Guest login failed: "+c.message); } }
+    async function handleLogout() { try { await fetch('/logout', { method: 'POST' }); } catch(e) { console.error("Logout failed", e); } finally { currentUser=null; document.getElementById("userInfoArea").style.display="none"; document.getElementById('sculptTestMessagesLink').style.display = 'none'; document.getElementById("authArea").style.display="block"; showAuthArea("login"); navigateTo("home"); } }
+    async function handleChangePassword(e) { e.preventDefault(); const o=document.getElementById("oldPassword").value, n=document.getElementById("newPassword").value, c=document.getElementById("confirmNewPassword").value; if(n!==c){alert("New passwords do not match.");return} try{ const r=await fetch("/changepassword",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({oldPassword:o,newPassword:n})}), j=await r.json(); alert(j.message); if(r.ok)e.target.reset() }catch(err){alert("Error: "+err.message)} }
+    async function handleChangeUsername(e) { e.preventDefault(); const n=document.getElementById("newUsername").value, p=document.getElementById("currentPasswordForUName").value; if(!confirm(`Change username to "${n}"? This costs 10 Diamonds.`))return; try{ const r=await fetch("/changeusername",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({newUsername:n,password:p})}), j=await r.json(); alert(j.message); if(r.ok){ currentUser = j.updatedUser; showLoggedInState(currentUser) } }catch(err){alert("Error: "+err.message)} }
+    async function fetchAndRenderSpotlight() { try { const r = await fetch('/spotlight'), j = await r.json(), d = document.getElementById('forumSpotlight'), c = document.getElementById('spotlightContent'); if (j.success && j.post) { const p = j.post; let h = `<b>Title:</b> ${p.title}<br><b>By:</b> ${p.author}<br><br><i>${p.content.substring(0, 200)}...</i><br><br>`; if(currentUser && currentUser.role !== 'guest') { h += `<input type="button" value="Go to Post" onclick="navigateTo('forum_post', '${p.id}')"> `; } if(currentUser && currentUser.role === 'admin') { h += `<input type="button" value="Remove Spotlight" onclick="handleDeleteSpotlight()">`; } h += ``; c.innerHTML = h; d.style.display = 'block'; } else { d.style.display = 'none'; } } catch (e) { console.error('Could not fetch spotlight:', e); document.getElementById('forumSpotlight').style.display = 'none'; } }
 
-    // --- 3D Editor Functions ---
+    // --- 2D Editor Functions ---
     function initEditor() {
-        const isMobile = window.innerWidth <= 768;
         const createView = document.getElementById('createView');
-        let toolbarHTML = `<div id="editorToolbar" style="padding: 5px; background: #f0f0f0; border-bottom: 1px solid #ccc;">
-            <input type="button" value="Save" onclick="saveScene()"> | 
-            <input type="button" value="Add Cube" onclick="addPrimitive('cube')"> 
-            <input type="button" value="Add Sphere" onclick="addPrimitive('sphere')"> | 
-            <input type="button" value="Move (W)" onclick="setTransformMode('translate')"> 
-            <input type="button" value="Rotate (E)" onclick="setTransformMode('rotate')"> 
-            <input type="button" value="Scale (R)" onclick="setTransformMode('scale')"> | 
-            <span id="saveStatus"></span>`;
-        if (isMobile) {
-            toolbarHTML += ` | <input type="button" value="Scene" onclick="togglePanel('scene-panel')">
-                            <input type="button" value="Props" onclick="togglePanel('properties-panel')">
-                            <input type="button" value="Exit" onclick="navigateTo('home')">`;
+        if (createView.innerHTML !== "") return; // Avoid re-initializing
+
+        const toolbarHTML = `
+            <div id="editorToolbar">
+                <input type="button" value="Save" onclick="saveScene()">
+                <label for="colorPicker">Color:</label>
+                <input type="color" id="colorPicker" value="${selectedColor}" onchange="selectedColor = this.value">
+                <button id="paintTool" class="active" onclick="setTool('paint', this)">Paint</button>
+                <button id="eraseTool" onclick="setTool('erase', this)">Erase</button>
+                <span id="saveStatus"></span>
+            </div>`;
+
+        const gridHTML = `<div id="grid-container"></div>`;
+        createView.innerHTML = toolbarHTML + gridHTML;
+        const gridContainer = document.getElementById('grid-container');
+
+        for (let i = 0; i < gridSize * gridSize; i++) {
+            const cell = document.createElement('div');
+            cell.classList.add('grid-cell');
+            cell.dataset.x = i % gridSize;
+            cell.dataset.y = Math.floor(i / gridSize);
+            gridContainer.appendChild(cell);
         }
-        toolbarHTML += `</div>`;
 
-        createView.innerHTML = `${toolbarHTML}
-            <div id="editorContainer"></div>
-            <div id="scene-panel"><b>Scene</b><hr><ul id="sceneList" style="list-style-type: none; padding-left: 5px; margin: 0;"></ul></div>
-            <div id="properties-panel"><div id="propsContent"></div></div>`;
-        
-        const container = document.getElementById('editorContainer');
-        
-        raycaster = new THREE.Raycaster();
-        editorScene = new THREE.Scene();
-        editorScene.background = new THREE.Color(0xcccccc);
-        editorCamera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 1000);
-        editorCamera.position.set(10, 10, 10);
-        editorRenderer = new THREE.WebGLRenderer({ antialias: true });
-        editorRenderer.setSize(container.clientWidth, container.clientHeight);
-        container.appendChild(editorRenderer.domElement);
-        orbitControls = new THREE.OrbitControls(editorCamera, editorRenderer.domElement);
-        transformControls = new THREE.TransformControls(editorCamera, editorRenderer.domElement);
-        transformControls.addEventListener('dragging-changed', event => { orbitControls.enabled = !event.value; });
-        transformControls.addEventListener('objectChange', () => { if (selectedObject) updatePropertiesPanel(); });
-        editorScene.add(transformControls);
-        
-        ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-        editorScene.add(ambientLight);
-        dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
-        dirLight.position.set(10, 15, 5);
-        editorScene.add(dirLight);
-        
-        const baseplateGeometry = new THREE.PlaneGeometry(50, 50);
-        const baseplateMaterial = new THREE.MeshStandardMaterial({ color: 0x228B22, side: THREE.DoubleSide });
-        const baseplateMesh = new THREE.Mesh(baseplateGeometry, baseplateMaterial);
-        baseplateMesh.rotation.x = -Math.PI / 2;
-        baseplateMesh.name = "Baseplate";
-        editorScene.add(baseplateMesh);
+        const handleDraw = (e) => {
+            if (e.buttons !== 1 && e.type !== 'mousedown') return; // Only draw on left-click drag
+            let target = e.target;
+            if (e.touches) {
+                target = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
+            }
+            if (target && target.classList.contains('grid-cell')) {
+                paintCell(target);
+            }
+            e.preventDefault();
+        };
 
-        window.addEventListener('resize', onEditorWindowResize);
-        container.addEventListener('mousedown', onEditorClick);
-        window.addEventListener('keydown', onEditorKeyDown);
+        gridContainer.addEventListener('mousedown', handleDraw);
+        gridContainer.addEventListener('mousemove', handleDraw);
+        gridContainer.addEventListener('touchstart', handleDraw, { passive: false });
+        gridContainer.addEventListener('touchmove', handleDraw, { passive: false });
+        
         editorInitialized = true;
-        animateEditor();
-        updateSceneGraph();
-        updatePropertiesPanel(); // Initial call to show lighting props
-    }
-    
-    function togglePanel(panelId) {
-        const panel = document.getElementById(panelId);
-        panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
     }
 
-
-    function animateEditor() { 
-        if (!editorInitialized || document.getElementById('createView').style.display === 'none') return; 
-        requestAnimationFrame(animateEditor); 
-        orbitControls.update(); 
-        editorRenderer.render(editorScene, editorCamera); 
-    }
-    
-    function onEditorWindowResize() { const c = document.getElementById('editorContainer'); if (!c || !editorCamera || !editorRenderer) return; editorCamera.aspect = c.clientWidth / c.clientHeight; editorCamera.updateProjectionMatrix(); editorRenderer.setSize(c.clientWidth, c.clientHeight); }
-    function onEditorClick(event) { if(transformControls.dragging) return; const bounds = document.getElementById('editorContainer').getBoundingClientRect(); const mouse = new THREE.Vector2(); mouse.x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1; mouse.y = -((event.clientY - bounds.top) / bounds.height) * 2 + 1; raycaster.setFromCamera(mouse, editorCamera); const intersects = raycaster.intersectObjects(editorObjects); if (intersects.length > 0) { selectObject(intersects[0].object); } else { selectObject(null); } }
-    function onEditorKeyDown(event) { switch (event.key.toLowerCase()) { case 'w': setTransformMode('translate'); break; case 'e': setTransformMode('rotate'); break; case 'r': setTransformMode('scale'); break; case 'delete': deleteSelectedObject(); break; } }
-    
-    function addPrimitive(type) { 
-        let geometry, material, mesh;
-        material = new THREE.MeshStandardMaterial({ color: Math.random() * 0xffffff });
-        
-        switch (type) { 
-            case 'cube': 
-                geometry = new THREE.BoxGeometry(2, 2, 2); 
-                break; 
-            case 'sphere': 
-                geometry = new THREE.SphereGeometry(1, 32, 16);
-                break;
-        } 
-        
-        mesh = new THREE.Mesh(geometry, material); 
-        mesh.name = `${type}_${editorObjects.length + 1}`;
-        mesh.position.set((Math.random() - 0.5) * 10, 1, (Math.random() - 0.5) * 10);
-        
-        editorScene.add(mesh); 
-        editorObjects.push(mesh);
-
-        selectObject(mesh); 
-        updateSceneGraph(); 
+    function setTool(tool, element) {
+        currentTool = tool;
+        document.getElementById('paintTool').classList.remove('active');
+        document.getElementById('eraseTool').classList.remove('active');
+        element.classList.add('active');
     }
 
-    function updateSceneGraph() { const l = document.getElementById('sceneList'); if (!l) return; l.innerHTML = ''; editorObjects.forEach((o) => { const item = document.createElement('li'); item.innerText = o.name; item.style.cursor = 'pointer'; item.style.backgroundColor = (o === selectedObject) ? '#ddd' : 'transparent'; item.onclick = () => selectObject(o); l.appendChild(item); }); }
-    function selectObject(object) { if (selectedObject) { selectedObject.material.emissive.setHex(0x000000); } selectedObject = object; if (selectedObject) { transformControls.attach(selectedObject); selectedObject.material.emissive.setHex(0x333333); } else { transformControls.detach(); } updateSceneGraph(); updatePropertiesPanel(); }
-    
-    function updatePropertiesPanel() { 
-        const d = document.getElementById('propsContent'); 
-        if (!d) return;
-        let html = '<b>Properties</b><hr>';
-        
-        if (selectedObject) {
-            const { position: p, rotation: r, scale: s } = selectedObject; 
-            html += `<b>Name:</b> ${selectedObject.name}<hr><b>Position:</b><br>X: <input type="number" step="0.1" value="${p.x.toFixed(2)}" onchange="updateObjectProp('position', 'x', this.value)"><br>Y: <input type="number" step="0.1" value="${p.y.toFixed(2)}" onchange="updateObjectProp('position', 'y', this.value)"><br>Z: <input type="number" step="0.1" value="${p.z.toFixed(2)}" onchange="updateObjectProp('position', 'z', this.value)"><br><hr><b>Rotation:</b><br>X: <input type="number" step="0.1" value="${(r.x * 180 / Math.PI).toFixed(1)}" onchange="updateObjectProp('rotation', 'x', this.value, true)"><br>Y: <input type="number" step="0.1" value="${(r.y * 180 / Math.PI).toFixed(1)}" onchange="updateObjectProp('rotation', 'y', this.value, true)"><br>Z: <input type="number" step="0.1" value="${(r.z * 180 / Math.PI).toFixed(1)}" onchange="updateObjectProp('rotation', 'z', this.value, true)"><br><hr><b>Scale:</b><br>X: <input type="number" step="0.1" value="${s.x.toFixed(2)}" onchange="updateObjectProp('scale', 'x', this.value)"><br>Y: <input type="number" step="0.1" value="${s.y.toFixed(2)}" onchange="updateObjectProp('scale', 'y', this.value)"><br>Z: <input type="number" step="0.1" value="${s.z.toFixed(2)}" onchange="updateObjectProp('scale', 'z', this.value)"><br><hr><b>Color:</b><br><input type="color" value="#${selectedObject.material.color.getHexString()}" onchange="updateObjectColor(this.value)"><br><hr><input type="button" value="Delete Object" onclick="deleteSelectedObject()">`;
-        } else {
-            html += 'No object selected.';
-        }
+    function paintCell(cell) {
+        const x = cell.dataset.x;
+        const y = cell.dataset.y;
+        const key = `${x},${y}`;
 
-        // Lighting Properties
-        html += `<hr><b>Lighting</b><br>`;
-        html += `Skybox Color:<br><input type="color" value="#${editorScene.background.getHexString()}" onchange="updateLighting('skybox', this.value)"><br>`;
-        html += `Ambient: <input type="range" min="0" max="2" step="0.1" value="${ambientLight.intensity}" oninput="updateLighting('ambient', this.value)"><br>`;
-        html += `Directional: <input type="range" min="0" max="2" step="0.1" value="${dirLight.intensity}" oninput="updateLighting('directional', this.value)">`;
-
-        d.innerHTML = html;
-    }
-
-    function updateObjectProp(prop, axis, val, isDeg) { if (!selectedObject) return; let n = parseFloat(val); if (isDeg) n *= Math.PI / 180; selectedObject[prop][axis] = n; }
-    
-    function updateObjectColor(hexColor) {
-        if (!selectedObject) return;
-        selectedObject.material.color.set(hexColor);
-    }
-    
-    function updateLighting(type, value) {
-        if (type === 'skybox') {
-            editorScene.background.set(value);
-        } else if (type === 'ambient') {
-            ambientLight.intensity = parseFloat(value);
-        } else if (type === 'directional') {
-            dirLight.intensity = parseFloat(value);
+        if (currentTool === 'paint') {
+            if(cell.style.backgroundColor !== selectedColor) {
+               cell.style.backgroundColor = selectedColor;
+            }
+            gridData[key] = selectedColor;
+        } else if (currentTool === 'erase') {
+            if(cell.style.backgroundColor !== '') {
+               cell.style.backgroundColor = '';
+            }
+            delete gridData[key];
         }
     }
 
-
-    function deleteSelectedObject() { if (!selectedObject || !confirm(`Delete ${selectedObject.name}?`)) return; const index = editorObjects.indexOf(selectedObject); if (index > -1) { editorScene.remove(selectedObject); editorObjects.splice(index, 1); selectObject(null); updateSceneGraph(); } }
-    function setTransformMode(mode) { transformControls.setMode(mode); }
-    
     async function saveScene() {
-        if (!currentUser || currentUser.username.startsWith('Guest')) return;
+        if (!currentUser || currentUser.role === 'guest') return;
         const saveStatus = document.getElementById('saveStatus');
         if (saveStatus) saveStatus.innerText = 'Saving...';
         
-        const sceneData = { 
-            objects: [],
-            lighting: {
-                skybox: '#' + editorScene.background.getHexString(),
-                ambient: ambientLight.intensity,
-                directional: dirLight.intensity
-            }
-        };
-
-        editorObjects.forEach(obj => {
-            sceneData.objects.push({
-                name: obj.name,
-                type: obj.geometry.type.replace('Geometry', '').toLowerCase(),
-                position: obj.position,
-                rotation: { x: obj.rotation.x, y: obj.rotation.y, z: obj.rotation.z },
-                scale: obj.scale,
-                color: '#' + obj.material.color.getHexString()
-            });
-        });
-        
         try {
+            // Username is sent via secure session cookie, not in body
             const response = await fetch('/studio/save', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: currentUser.username, sceneData: sceneData })
+                body: JSON.stringify({ sceneData: { grid: gridData } })
             });
             const result = await response.json();
             if (saveStatus) saveStatus.innerText = `Saved at ${new Date().toLocaleTimeString()}`;
@@ -1054,46 +924,28 @@
     }
 
     async function loadScene() {
-        if (!currentUser || currentUser.username.startsWith('Guest')) return;
-        while(editorObjects.length > 0) {
-             const obj = editorObjects[0];
-             editorScene.remove(obj);
-             editorObjects.splice(0, 1);
+        if (!currentUser || currentUser.role === 'guest') return;
+        gridData = {};
+        const cells = document.querySelectorAll('.grid-cell');
+        if (!cells || cells.length === 0) {
+            console.log("Editor not ready for loading, skipping.");
+            return;
         }
-        selectObject(null);
+        cells.forEach(cell => { cell.style.backgroundColor = ''; });
         
         try {
-            const response = await fetch(`/studio/load?username=${currentUser.username}`);
+            // Username is determined by the server's session
+            const response = await fetch(`/studio/load`);
             const result = await response.json();
-            if (result.success && result.sceneData) {
-                // Load Lighting
-                if (result.sceneData.lighting) {
-                    updateLighting('skybox', result.sceneData.lighting.skybox || '#cccccc');
-                    updateLighting('ambient', result.sceneData.lighting.ambient || 0.5);
-                    updateLighting('directional', result.sceneData.lighting.directional || 0.8);
+            if (result.success && result.sceneData && result.sceneData.grid) {
+                gridData = result.sceneData.grid;
+                for (const key in gridData) {
+                    const [x, y] = key.split(',');
+                    const cell = document.querySelector(`.grid-cell[data-x='${x}'][data-y='${y}']`);
+                    if (cell) {
+                        cell.style.backgroundColor = gridData[key];
+                    }
                 }
-                
-                // Load Objects
-                if (result.sceneData.objects) {
-                    result.sceneData.objects.forEach(objData => {
-                        let geometry, material, mesh;
-                        material = new THREE.MeshStandardMaterial({ color: objData.color || 0xffffff });
-                        switch (objData.type) {
-                            case 'box': geometry = new THREE.BoxGeometry(2, 2, 2); break;
-                            case 'sphere': geometry = new THREE.SphereGeometry(1, 32, 16); break;
-                            default: return;
-                        }
-                        mesh = new THREE.Mesh(geometry, material);
-                        mesh.name = objData.name;
-                        mesh.position.set(objData.position.x, objData.position.y, objData.position.z);
-                        mesh.rotation.set(objData.rotation.x, objData.rotation.y, objData.rotation.z);
-                        mesh.scale.set(objData.scale.x, objData.scale.y, objData.scale.z);
-                        editorScene.add(mesh);
-                        editorObjects.push(mesh);
-                    });
-                }
-                updateSceneGraph();
-                updatePropertiesPanel();
             } else {
                 console.log("No saved scene found or error loading.");
             }
@@ -1107,7 +959,8 @@
         const modal = document.getElementById('chatLogModal');
         modal.style.display = "block";
         try {
-            const response = await fetch(`/moderator/chatlogs?username=${currentUser.username}`);
+            // Auth is handled by session cookie
+            const response = await fetch(`/moderator/chatlogs`);
             const result = await response.json();
             if (!result.success) throw new Error(result.message);
             allChatLogs = result.logs.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
@@ -1126,26 +979,15 @@
         const searchTerm = document.getElementById('logSearch').value.toLowerCase();
         const userTerm = document.getElementById('logUserSearch').value.toLowerCase();
         const dateTerm = document.getElementById('logDateFilter').value;
-
         let filteredLogs = allChatLogs;
-
-        if (searchTerm) {
-            filteredLogs = filteredLogs.filter(log => log.text.toLowerCase().includes(searchTerm));
-        }
-        if (userTerm) {
-            filteredLogs = filteredLogs.filter(log => log.sender.toLowerCase().includes(userTerm));
-        }
-        if (dateTerm) {
-            filteredLogs = filteredLogs.filter(log => log.timestamp.startsWith(dateTerm));
-        }
-
+        if (searchTerm) { filteredLogs = filteredLogs.filter(log => log.text.toLowerCase().includes(searchTerm)); }
+        if (userTerm) { filteredLogs = filteredLogs.filter(log => log.sender.toLowerCase().includes(userTerm)); }
+        if (dateTerm) { filteredLogs = filteredLogs.filter(log => log.timestamp.startsWith(dateTerm)); }
         const logContentDiv = document.getElementById('logContent');
         logContentDiv.innerHTML = '';
-
         const startIndex = (currentPage - 1) * logsPerPage;
         const endIndex = startIndex + logsPerPage;
         const paginatedLogs = filteredLogs.slice(startIndex, endIndex);
-
         if (paginatedLogs.length === 0) {
             logContentDiv.innerHTML = 'No logs found with the current filters.';
         } else {
@@ -1157,7 +999,6 @@
                 logContentDiv.appendChild(logElement);
             });
         }
-        
         renderPagination(filteredLogs.length);
     }
 
@@ -1165,41 +1006,37 @@
         const paginationDiv = document.getElementById('logPagination');
         paginationDiv.innerHTML = '';
         const totalPages = Math.ceil(totalLogs / logsPerPage);
-
         for (let i = 1; i <= totalPages; i++) {
             const pageButton = document.createElement('button');
             pageButton.innerText = i;
-            if (i === currentPage) {
-                pageButton.disabled = true;
-            }
-            pageButton.onclick = () => {
-                currentPage = i;
-                renderChatLogs();
-            };
+            if (i === currentPage) { pageButton.disabled = true; }
+            pageButton.onclick = () => { currentPage = i; renderChatLogs(); };
             paginationDiv.appendChild(pageButton);
         }
     }
 
-
-    // --- Page Initialization ---
-    function initialize() {
-        const storedUser = localStorage.getItem('playsculpt_user');
-        if (storedUser) {
-            try {
-                currentUser = JSON.parse(storedUser);
+    // --- (UPDATED) Page Initialization ---
+    async function initialize() {
+        try {
+            const response = await fetch('/check-session');
+            const result = await response.json();
+            if (result.success) {
+                currentUser = result.user;
                 showLoggedInState(currentUser);
-            } catch(e) {
+            } else {
                 currentUser = null;
-                localStorage.removeItem('playsculpt_user');
                 showAuthArea('login');
             }
-        } else {
+        } catch(e) {
+            console.error("Could not check session.", e);
             showAuthArea('login');
         }
+        
         fetchAndRenderSpotlight();
         fetchAndRenderBanner();
     }
     
+    // Start the application
     initialize();
   </script>
 
